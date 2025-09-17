@@ -8,6 +8,7 @@ import { Base64Tool } from "@/components/tools/Base64Tool";
 import { UrlEncodeTool } from "@/components/tools/UrlEncodeTool";
 import { HashGenerator } from "@/components/tools/HashGenerator";
 import { TextCaseConverter } from "@/components/tools/TextCaseConverter";
+import { VideoCompressor } from "@/components/tools/VideoCompressor";
 
 const Index = () => {
   const [activeTool, setActiveTool] = useState("json-viewer");
@@ -26,6 +27,8 @@ const Index = () => {
         return <HashGenerator />;
       case "text-case":
         return <TextCaseConverter />;
+      case "video-compressor":
+        return <VideoCompressor />;
       default:
         return <JsonViewer />;
     }
@@ -36,9 +39,10 @@ const Index = () => {
       "json-viewer": "JSON Viewer & Formatter",
       "json-compare": "JSON Comparison Tool", 
       "base64": "Base64 Encoder/Decoder",
-      "url-encode": "URL Encoder/Decoder",
+      "url-encode": "URL Encoder/Decoder", 
       "hash": "Hash Generator",
-      "text-case": "Text Case Converter"
+      "text-case": "Text Case Converter",
+      "video-compressor": "Video Compressor"
     };
     return titles[activeTool as keyof typeof titles] || "Developer Tools";
   };

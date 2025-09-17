@@ -11,7 +11,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
-  Zap
+  Zap,
+  FileVideo
 } from "lucide-react";
 
 interface Tool {
@@ -57,6 +58,12 @@ const tools: Tool[] = [
     name: "Text Case Converter",
     icon: Type,
     description: "Convert text cases"
+  },
+  {
+    id: "video-compressor",
+    name: "Video Compressor",
+    icon: FileVideo,
+    description: "Reduce video file sizes"
   }
 ];
 
