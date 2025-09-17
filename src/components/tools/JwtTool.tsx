@@ -7,7 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Copy, Shield, Clock, User, AlertTriangle, CheckCircle2, XCircle, Key, RefreshCw, Download } from 'lucide-react';
+import { Copy, Shield, Clock, User, AlertTriangle, CheckCircle2, XCircle, Key, RefreshCw, Download, ChevronDown } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { jwtVerify, importSPKI, SignJWT, importPKCS8 } from 'jose';
 
@@ -27,16 +28,92 @@ interface ValidationState {
   signatureError: string | null;
 }
 
-const EXAMPLE_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+const JWT_EXAMPLES = {
+  'basic-hs256': {
+    name: '🔐 Basic HS256 Example',
+    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+    secret: 'your-256-bit-secret',
+    publicKey: '',
+    privateKey: '',
+    algorithm: 'HS256',
+    description: 'Simple user authentication token with basic claims'
+  },
+  'user-session': {
+    name: '👤 User Session Token',
+    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzEyMzQ1IiwibmFtZSI6IkFsaWNlIFNtaXRoIiwiZW1haWwiOiJhbGljZUBleGFtcGxlLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDAsImF1ZCI6Im15LWFwcCIsImlzcyI6Im15LWFwcC1hdXRoIn0.kTZUTHn2xD72cG8yqaNG7ZQxdEPWgLPGu0eDUShOYhY',
+    secret: 'super-secure-session-key-2024',
+    publicKey: '',
+    privateKey: '',
+    algorithm: 'HS256',
+    description: 'Complete user session with role, email, and expiration'
+  },
+  'api-access': {
+    name: '🔑 API Access Token',
+    token: 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhcGktY2xpZW50LTc4OSIsImF1ZCI6ImFwaS12MS5teWFwcC5jb20iLCJpc3MiOiJhdXRoLm15YXBwLmNvbSIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoxNzAwMDA3MjAwLCJzY29wZSI6InJlYWQ6dXNlcnMgd3JpdGU6cG9zdHMiLCJjbGllbnRfaWQiOiJ3ZWJfYXBwX3YxIn0.sZzKw-GW_vk4MfYrPe-6h7v5ZuDY3N8XrJm5K2TlvBf_w4QxE3VyZmL0P9A7YsN4Jk8RqW6TpC2H1GfX3nM1Qw',
+    secret: 'api-signing-key-with-extra-security-2024!',
+    publicKey: '',
+    privateKey: '',
+    algorithm: 'HS512',
+    description: 'API client authentication with scopes and long expiration'
+  },
+  'rsa-example': {
+    name: '🔒 RSA256 Example',
+    token: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InJzYS1rZXktMSJ9.eyJzdWIiOiJhZG1pbi11c2VyIiwibmFtZSI6IkFkbWluIFVzZXIiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDAsImF1ZCI6Im15LWFwcCIsImlzcyI6Im15LWFwcC1hdXRoIiwicGVybWlzc2lvbnMiOlsidXNlcjpyZWFkIiwidXNlcjp3cml0ZSIsInBvc3Q6ZGVsZXRlIiwiYWRtaW46YWNjZXNzIl19.example-rsa-signature-would-be-here-but-this-is-demo-only',
+    secret: '',
+    publicKey: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4f5wg5l2hKsTeNem/V41\nfGnJm6gOdrj8ym3rFkEjWT2btf+JhwgOHiKIhd37jHT4+pD0tO4ZY0k2RSzKbOGH\nsjQCLMCgFq3PL6EoV1M2bPOgQz3SqBu2pE9i1JhT3Y8pFbJg2lhXyOCgCL4F6YLg\nCRhXNLY5tJ5pf0JQ7H4Ov/G8K4CXqKXZ0f3k7b8K1c4m0rH1j4zqUm3K4XZs5F4O\n5G4pVc8R3k7J5F4K7GHyO1MZDsW8jXz3JgcqJ1O3Q5G7o1e8m3HqP1g4w8oM5t5\nL1K8L2J9Q5G1kXZ0O1y4z8sGh4v5i3w7I5PZQ8j7qN4k2J5Z5j5P5j5w7I5PZQID\nAQAB\n-----END PUBLIC KEY-----',
+    privateKey: '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDh/nCDmXaEqxN4\n16b9XjV8acmbqA52uPzKbesWQSNZPZu1/4mHCA4eIoiF3fuMdPj6kPS07hljSTZF\nLMps4YeyNAIswKAWrc8voShXUzZs86BDPdKoG7akT2LUmFPdjykVsmDaWFfI4KAI\nvgXpguAJGFc0tjm0nml/QlDsfg6/8bwrgJeopdnR/eTtvwrVzibSsfWPjOpSbcrh\ndmzkXg7kbilVzxHeTsnkXgrsYfI7UxkOxbyNfPcmBzonU7dDkbujV7ybceo/WDjD\nygzm3kvUrwvYn1DkbWRdnQ7XLjPywaHi/mLfDsjk9lDyPuo3iTYnlnmPk/mPnDsj\nk9lAAgMBAAECggEBAKnWD9b3WfGf5H9B2z6zKq2s9wGw2Z3vJ1jH4dH7P6h9P9z5\n5K7z5Z5q5f5J5h5g5L5e5M5P5N5y5s5m5M5n5P5r5w5Z5K5y5s5G5H5h5f5e5L5M\n5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P\n5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P\n5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N\n5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R\n5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y\nECggEBAP5G1h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P\n5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N\n5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R\n5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y\n5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z\n5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s\nwJBAOGCggEBAOT5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H\n5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G\n5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h\n5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J\n5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f\n5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h\n-----END PRIVATE KEY-----',
+    algorithm: 'RS256',
+    description: 'Admin token with RSA signature and permission-based access'
+  },
+  'microservice': {
+    name: '🏗️ Microservice Token',
+    token: 'eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzZXJ2aWNlLXVzZXItbWdtdCIsImF1ZCI6WyJ1c2VyLXNlcnZpY2UiLCJub3RpZmljYXRpb24tc2VydmljZSJdLCJpc3MiOiJhcGktZ2F0ZXdheSIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoxNzAwMDA3MjAwLCJzZXJ2aWNlIjoidXNlci1tYW5hZ2VtZW50IiwidmVyc2lvbiI6InYyLjEuMyIsImVudmlyb25tZW50IjoicHJvZHVjdGlvbiIsInJlcXVlc3RfaWQiOiJyZXEtNzg5LWFiYy0xMjMifQ.Q3O2Y1S8H5L9qN7vMzP2W6gR4tK8J3xA5c0VeU9nB7mZ1zY3qS5pX8wE4rT6vI',
+    secret: 'microservice-inter-communication-key-2024',
+    publicKey: '',
+    privateKey: '',
+    algorithm: 'HS384',
+    description: 'Inter-service communication with environment and version info'
+  },
+  'refresh-token': {
+    name: '🔄 Refresh Token',
+    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzk4NzY1IiwidG9rZW5fdHlwZSI6InJlZnJlc2giLCJjbGllbnRfaWQiOiJ3ZWJfYXBwIiwic2NvcGUiOiJvZmZsaW5lX2FjY2VzcyIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoxNzAyNTkyMDAwLCJqdGkiOiJyZWZyZXNoLXRva2VuLTEyMy00NTYtNzg5IiwiaXNzIjoibXlhcHAuY29tIiwiYXVkIjoibXlhcHAuY29tIn0.fH8vMq2N5Lg7XsY9Z1pK0jR6wC3nE4uA8tV5rQ2bD7x',
+    secret: 'refresh-token-signing-key-very-secure',
+    publicKey: '',
+    privateKey: '',
+    algorithm: 'HS256',
+    description: 'Long-lived refresh token for token renewal (90 days)'
+  },
+  'ecdsa-example': {
+    name: '🌐 ECDSA ES256 Token',
+    token: 'eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImVjZHNhLWtleS0xIn0.eyJzdWIiOiJtb2JpbGUtdXNlci0xMjMiLCJuYW1lIjoiTW9iaWxlIFVzZXIiLCJkZXZpY2VfaWQiOiJpb3MtZGV2aWNlLTc4OSIsImFwcF92ZXJzaW9uIjoiMi4zLjEiLCJwbGF0Zm9ybSI6ImlvcyIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoxNzAwMDA3MjAwLCJhdWQiOiJtb2JpbGUtYXBwIiwiaXNzIjoibW9iaWxlLWF1dGgtc2VydmljZSJ9.example-ecdsa-signature-demo-only',
+    secret: '',
+    publicKey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE4f5wg5l2hKsTeNem/V41fGnJm6gO\ndrj8ym3rFkEjWT2btf+JhwgOHiKIhd37jHT4+pD0tO4ZY0k2RSzKbOGHsjQCLMCg\nFq3PL6EoV1M2bPOgQz3SqBu2pE9i1JhT3Y8pFbJg2lhXyOCgCL4F6YLgCRhXNLY5\ntJ5pf0JQ7H4Ov/G8K4CXqKXZ0f3k7b8K1c4m0rH1j4zqUm3K4XZs5F4O5G4pVc8R\n-----END PUBLIC KEY-----',
+    privateKey: '-----BEGIN PRIVATE KEY-----\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg4f5wg5l2hKsTeNem\n/V41fGnJm6gOdrj8ym3rFkEjWT2hRANCAATh/nCDmXaEqxN416b9XjV8acmbqA52\nuPzKbesWQSNZPZu1/4mHCA4eIoiF3fuMdPj6kPS07hljSTZFLMps4YeyNAIswKAW\nrc8voShXUzZs86BDPdKoG7akT2LUmFPdjykVsmDaWFfI4KAIvgXpguAJGFc0tjm0\nnml/QlDsfg6/8bwrgJeopdnR/eTtvwrVzibSsfWPjOpSbcrhdmzkXg7kbilVzxHe\n-----END PRIVATE KEY-----',
+    algorithm: 'ES256',
+    description: 'Mobile app authentication with ECDSA and device info'
+  },
+  'admin-token': {
+    name: '👑 Admin SuperUser Token',
+    token: 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbi1zdXBlci0wMDEiLCJuYW1lIjoiU3VwZXIgQWRtaW4iLCJlbWFpbCI6InN1cGVyYWRtaW5AY29tcGFueS5jb20iLCJyb2xlIjoic3VwZXJfYWRtaW4iLCJwZXJtaXNzaW9ucyI6WyIqIl0sImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoxNzAwMDA3MjAwLCJhdWQiOlsiYWRtaW4tcGFuZWwiLCJhcGktdjEiLCJhcGktdjIiXSwiaXNzIjoiaW50ZXJuYWwtYXV0aCIsImRlcGFydG1lbnQiOiJJVCIsImVtcGxveWVlX2lkIjoiRU1QLTAwMSIsImNsZWFyYW5jZV9sZXZlbCI6ImwxMCJ9.7K8R5Q2W9jMvPzN4eY7nL6gH3rJ0aX8dF5oU1tB9cS6wZ3vY8mE4pQ1nK7jR5tA0',
+    secret: 'super-admin-ultra-secure-key-company-2024!!',
+    publicKey: '',
+    privateKey: '',
+    algorithm: 'HS512',
+    description: 'Maximum privilege admin token with all permissions and metadata'
+  }
+};
+
+type ExampleKey = keyof typeof JWT_EXAMPLES;
 
 export const JwtTool: React.FC = () => {
-  const [token, setToken] = useState(EXAMPLE_TOKEN);
+  const [token, setToken] = useState(JWT_EXAMPLES['basic-hs256'].token);
   const [secret, setSecret] = useState('your-256-bit-secret');
   const [publicKey, setPublicKey] = useState('');
   const [privateKey, setPrivateKey] = useState('');
   const [headerText, setHeaderText] = useState('');
   const [payloadText, setPayloadText] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoadingExample, setIsLoadingExample] = useState(false);
   const [validation, setValidation] = useState<ValidationState>({
     isValidFormat: false,
     isSignatureValid: null,
@@ -108,7 +185,10 @@ export const JwtTool: React.FC = () => {
         const encoder = new TextEncoder();
         const secretKey = encoder.encode(secret);
         
-        const jwt = new SignJWT(payload)
+        // Create a clean payload copy without jose library modifications
+        const cleanPayload = { ...payload };
+        
+        const jwt = new SignJWT(cleanPayload)
           .setProtectedHeader(header);
         
         return await jwt.sign(secretKey);
@@ -117,7 +197,10 @@ export const JwtTool: React.FC = () => {
         
         const key = await importPKCS8(privateKey, algorithm);
         
-        const jwt = new SignJWT(payload)
+        // Create a clean payload copy without jose library modifications
+        const cleanPayload = { ...payload };
+        
+        const jwt = new SignJWT(cleanPayload)
           .setProtectedHeader(header);
         
         return await jwt.sign(key);
@@ -230,13 +313,27 @@ export const JwtTool: React.FC = () => {
     return new Date(timestamp * 1000).toLocaleString();
   };
 
-  const loadExampleToken = () => {
-    setToken(EXAMPLE_TOKEN);
-    setSecret('your-256-bit-secret');
-    setPublicKey('');
-    setPrivateKey('');
-    setSelectedTab('hmac');
+  const loadExampleToken = (exampleKey: ExampleKey) => {
+    const example = JWT_EXAMPLES[exampleKey];
+    setIsLoadingExample(true);
+    
+    // Set all values atomically
+    setToken(example.token);
+    setSecret(example.secret);
+    setPublicKey(example.publicKey);
+    setPrivateKey(example.privateKey);
+    setSelectedTab(example.algorithm.startsWith('HS') ? 'hmac' : 'rsa');
     setIsEditing(false);
+    
+    // Update key signature to match the new example
+    const newKeySignature = `${example.secret}|${example.privateKey}|${example.algorithm}`;
+    setLastKeySignature(newKeySignature);
+    
+    // Reset loading state after a brief delay
+    setTimeout(() => {
+      setIsLoadingExample(false);
+      toast.success(`Loaded ${example.name}! 🎯`);
+    }, 100);
   };
 
   const addCommonClaims = () => {
@@ -292,7 +389,7 @@ export const JwtTool: React.FC = () => {
   useEffect(() => {
     const timeoutId = setTimeout(() => processToken(token), 300);
     return () => clearTimeout(timeoutId);
-  }, [token, secret, publicKey]);
+  }, [token, secret, publicKey, privateKey]);
 
   // Handle edited content changes
   useEffect(() => {
@@ -301,6 +398,34 @@ export const JwtTool: React.FC = () => {
       return () => clearTimeout(timeoutId);
     }
   }, [handleEditedContentChange, isEditing]);
+
+  // Track when keys or algorithm change to trigger regeneration
+  const [lastKeySignature, setLastKeySignature] = useState('');
+  
+  // Auto-regenerate token when keys change (not just when editing)
+  useEffect(() => {
+    const autoRegenerateToken = async () => {
+      if (!validation.decoded || isEditing || isLoadingExample) return;
+      
+      // Create a signature of current keys and algorithm to detect changes
+      const currentKeySignature = `${secret}|${privateKey}|${validation.decoded.header.alg}`;
+      
+      // Only regenerate if keys actually changed
+      if (currentKeySignature === lastKeySignature) return;
+      
+      const { header, payload } = validation.decoded;
+      const newToken = await generateNewToken(header, payload);
+      
+      if (newToken && newToken !== token) {
+        setToken(newToken);
+        setLastKeySignature(currentKeySignature);
+        toast.success('Token signature updated! 🔐✨');
+      }
+    };
+    
+    const timeoutId = setTimeout(autoRegenerateToken, 300);
+    return () => clearTimeout(timeoutId);
+  }, [secret, privateKey, validation.decoded, token, isEditing, lastKeySignature, isLoadingExample]);
 
   // Initial load
   useEffect(() => {
@@ -342,9 +467,23 @@ export const JwtTool: React.FC = () => {
               <CardTitle className="text-2xl">JWT Toolkit 📄✨</CardTitle>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={loadExampleToken}>
-                Load Example 📝
-              </Button>
+              <Select onValueChange={(value: ExampleKey) => loadExampleToken(value)}>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Load Example 📝" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(JWT_EXAMPLES).map(([key, example]) => (
+                    <SelectItem key={key} value={key}>
+                      <div className="flex flex-col items-start">
+                        <span className="font-medium">{example.name}</span>
+                        <span className="text-xs text-muted-foreground truncate max-w-[200px]">
+                          {example.description}
+                        </span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <Button variant="outline" size="sm" onClick={downloadToken} disabled={!token}>
                 <Download className="h-4 w-4 mr-1" />
                 Download 💾
