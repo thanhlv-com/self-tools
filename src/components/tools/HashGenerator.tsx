@@ -8,6 +8,8 @@ import { Copy, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import blake2b from "blake2b";
 import { sha3_256, sha3_512, keccak256 } from "js-sha3";
+import CRC32 from "crc-32";
+import md4 from "js-md4";
 
 export const HashGenerator = () => {
   const [input, setInput] = useState("");
@@ -77,6 +79,45 @@ export const HashGenerator = () => {
     return keccak256(text);
   };
 
+  const generateMD4 = (text: string): string => {
+    return md4(text);
+  };
+
+  const generateCRC32 = (text: string): string => {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text);
+    const crc = CRC32.buf(data);
+    return (crc >>> 0).toString(16).padStart(8, '0');
+  };
+
+  const generateSHA224 = async (text: string): Promise<string> => {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text);
+    const hashBuffer = await crypto.subtle.digest('SHA-384', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.slice(0, 28).map(b => b.toString(16).padStart(2, '0')).join('');
+  };
+
+  const generateSimpleHash = (text: string): string => {
+    let hash = 0;
+    if (text.length === 0) return '0';
+    for (let i = 0; i < text.length; i++) {
+      const char = text.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash;
+    }
+    return Math.abs(hash).toString(16);
+  };
+
+  const generateFNV1a = (text: string): string => {
+    let hash = 2166136261;
+    for (let i = 0; i < text.length; i++) {
+      hash ^= text.charCodeAt(i);
+      hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+    }
+    return (hash >>> 0).toString(16);
+  };
+
   const generateAllHashes = async () => {
     if (!input.trim()) {
       toast({
@@ -93,6 +134,7 @@ export const HashGenerator = () => {
         generateSHA1(input),
         generateSHA384(input),
         generateSHA512(input),
+        generateSHA224(input),
         // MD5 might not be available in all browsers
         generateMD5(input).catch(() => "Not supported")
       ]);
@@ -101,7 +143,11 @@ export const HashGenerator = () => {
         'BLAKE2b': generateBLAKE2b(input),
         'SHA3-256': generateSHA3_256(input),
         'SHA3-512': generateSHA3_512(input),
-        'Keccak-256': generateKeccak256(input)
+        'Keccak-256': generateKeccak256(input),
+        'MD4': generateMD4(input),
+        'CRC-32': generateCRC32(input),
+        'Simple Hash': generateSimpleHash(input),
+        'FNV-1a': generateFNV1a(input)
       };
 
       setHashes({
@@ -109,7 +155,8 @@ export const HashGenerator = () => {
         'SHA-1': results[1],
         'SHA-384': results[2],
         'SHA-512': results[3],
-        'MD5': results[4],
+        'SHA-224': results[4],
+        'MD5': results[5],
         ...syncResults
       });
 
@@ -143,7 +190,7 @@ export const HashGenerator = () => {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-foreground mb-2">Hash Generator</h2>
-        <p className="text-muted-foreground">Generate MD5, SHA-1, SHA-256, SHA-384, SHA-512, BLAKE2b, SHA3, and Keccak hashes</p>
+        <p className="text-muted-foreground">Generate MD4, MD5, SHA-1, SHA-224, SHA-256, SHA-384, SHA-512, SHA3, BLAKE2b, Keccak, CRC-32, FNV-1a, and Simple Hash algorithms</p>
       </div>
 
       <Card>
@@ -209,12 +256,20 @@ export const HashGenerator = () => {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
             <div>
+              <h4 className="font-semibold mb-2">MD4</h4>
+              <p className="text-muted-foreground">128-bit hash function, predecessor to MD5, deprecated</p>
+            </div>
+            <div>
               <h4 className="font-semibold mb-2">MD5</h4>
               <p className="text-muted-foreground">128-bit hash function, fast but cryptographically broken</p>
             </div>
             <div>
               <h4 className="font-semibold mb-2">SHA-1</h4>
               <p className="text-muted-foreground">160-bit hash function, deprecated for security</p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-2">SHA-224</h4>
+              <p className="text-muted-foreground">224-bit hash function, truncated SHA-256</p>
             </div>
             <div>
               <h4 className="font-semibold mb-2">SHA-256</h4>
@@ -243,6 +298,18 @@ export const HashGenerator = () => {
             <div>
               <h4 className="font-semibold mb-2">Keccak-256</h4>
               <p className="text-muted-foreground">Original Keccak algorithm, used in Ethereum</p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-2">CRC-32</h4>
+              <p className="text-muted-foreground">32-bit cyclic redundancy check, for error detection</p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-2">FNV-1a</h4>
+              <p className="text-muted-foreground">Fast non-cryptographic hash, good for hash tables</p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-2">Simple Hash</h4>
+              <p className="text-muted-foreground">Basic hash function for demonstration purposes</p>
             </div>
           </div>
         </CardContent>
