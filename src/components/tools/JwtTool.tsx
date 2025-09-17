@@ -61,7 +61,7 @@ const JWT_EXAMPLES = {
     token: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InJzYS1rZXktMSJ9.eyJzdWIiOiJhZG1pbi11c2VyIiwibmFtZSI6IkFkbWluIFVzZXIiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDAsImF1ZCI6Im15LWFwcCIsImlzcyI6Im15LWFwcC1hdXRoIiwicGVybWlzc2lvbnMiOlsidXNlcjpyZWFkIiwidXNlcjp3cml0ZSIsInBvc3Q6ZGVsZXRlIiwiYWRtaW46YWNjZXNzIl19.example-rsa-signature-would-be-here-but-this-is-demo-only',
     secret: '',
     publicKey: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4f5wg5l2hKsTeNem/V41\nfGnJm6gOdrj8ym3rFkEjWT2btf+JhwgOHiKIhd37jHT4+pD0tO4ZY0k2RSzKbOGH\nsjQCLMCgFq3PL6EoV1M2bPOgQz3SqBu2pE9i1JhT3Y8pFbJg2lhXyOCgCL4F6YLg\nCRhXNLY5tJ5pf0JQ7H4Ov/G8K4CXqKXZ0f3k7b8K1c4m0rH1j4zqUm3K4XZs5F4O\n5G4pVc8R3k7J5F4K7GHyO1MZDsW8jXz3JgcqJ1O3Q5G7o1e8m3HqP1g4w8oM5t5\nL1K8L2J9Q5G1kXZ0O1y4z8sGh4v5i3w7I5PZQ8j7qN4k2J5Z5j5P5j5w7I5PZQID\nAQAB\n-----END PUBLIC KEY-----',
-    privateKey: '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDh/nCDmXaEqxN4\n16b9XjV8acmbqA52uPzKbesWQSNZPZu1/4mHCA4eIoiF3fuMdPj6kPS07hljSTZF\nLMps4YeyNAIswKAWrc8voShXUzZs86BDPdKoG7akT2LUmFPdjykVsmDaWFfI4KAI\nvgXpguAJGFc0tjm0nml/QlDsfg6/8bwrgJeopdnR/eTtvwrVzibSsfWPjOpSbcrh\ndmzkXg7kbilVzxHeTsnkXgrsYfI7UxkOxbyNfPcmBzonU7dDkbujV7ybceo/WDjD\nygzm3kvUrwvYn1DkbWRdnQ7XLjPywaHi/mLfDsjk9lDyPuo3iTYnlnmPk/mPnDsj\nk9lAAgMBAAECggEBAKnWD9b3WfGf5H9B2z6zKq2s9wGw2Z3vJ1jH4dH7P6h9P9z5\n5K7z5Z5q5f5J5h5g5L5e5M5P5N5y5s5m5M5n5P5r5w5Z5K5y5s5G5H5h5f5e5L5M\n5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P\n5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P\n5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N\n5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R\n5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y\nECggEBAP5G1h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P\n5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N\n5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R\n5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y\n5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z\n5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s\nwJBAOGCggEBAOT5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H\n5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G\n5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h\n5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J\n5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f\n5e5L5M5P5R5Z5K5W5G5J5h5m5e5P5N5y5s5G5H5h5f5e5L5M5P5R5Z5K5W5G5J5h\n-----END PRIVATE KEY-----',
+    privateKey: '',
     algorithm: 'RS256',
     description: 'Admin token with RSA signature and permission-based access'
   },
@@ -88,7 +88,7 @@ const JWT_EXAMPLES = {
     token: 'eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImVjZHNhLWtleS0xIn0.eyJzdWIiOiJtb2JpbGUtdXNlci0xMjMiLCJuYW1lIjoiTW9iaWxlIFVzZXIiLCJkZXZpY2VfaWQiOiJpb3MtZGV2aWNlLTc4OSIsImFwcF92ZXJzaW9uIjoiMi4zLjEiLCJwbGF0Zm9ybSI6ImlvcyIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoxNzAwMDA3MjAwLCJhdWQiOiJtb2JpbGUtYXBwIiwiaXNzIjoibW9iaWxlLWF1dGgtc2VydmljZSJ9.example-ecdsa-signature-demo-only',
     secret: '',
     publicKey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE4f5wg5l2hKsTeNem/V41fGnJm6gO\ndrj8ym3rFkEjWT2btf+JhwgOHiKIhd37jHT4+pD0tO4ZY0k2RSzKbOGHsjQCLMCg\nFq3PL6EoV1M2bPOgQz3SqBu2pE9i1JhT3Y8pFbJg2lhXyOCgCL4F6YLgCRhXNLY5\ntJ5pf0JQ7H4Ov/G8K4CXqKXZ0f3k7b8K1c4m0rH1j4zqUm3K4XZs5F4O5G4pVc8R\n-----END PUBLIC KEY-----',
-    privateKey: '-----BEGIN PRIVATE KEY-----\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg4f5wg5l2hKsTeNem\n/V41fGnJm6gOdrj8ym3rFkEjWT2hRANCAATh/nCDmXaEqxN416b9XjV8acmbqA52\nuPzKbesWQSNZPZu1/4mHCA4eIoiF3fuMdPj6kPS07hljSTZFLMps4YeyNAIswKAW\nrc8voShXUzZs86BDPdKoG7akT2LUmFPdjykVsmDaWFfI4KAIvgXpguAJGFc0tjm0\nnml/QlDsfg6/8bwrgJeopdnR/eTtvwrVzibSsfWPjOpSbcrhdmzkXg7kbilVzxHe\n-----END PRIVATE KEY-----',
+    privateKey: '',
     algorithm: 'ES256',
     description: 'Mobile app authentication with ECDSA and device info'
   },
@@ -290,13 +290,16 @@ export const JwtTool: React.FC = () => {
         const now = Math.floor(Date.now() / 1000);
         const expired = payload.exp && payload.exp < now;
         
+        // Only show error if we're actively editing and missing keys
+        const shouldShowKeyError = header.alg.startsWith('HS') ? !secret.trim() : !privateKey.trim();
+        
         setValidation(prev => ({
           ...prev,
           decoded: { header, payload, signature: prev.decoded?.signature || '' },
           algorithm: header.alg,
           expired,
           isSignatureValid: null,
-          signatureError: 'Provide secret/private key to generate signature automatically'
+          signatureError: shouldShowKeyError ? 'Provide secret/private key to generate signature automatically 😞' : null
         }));
       }
     } catch (error) {
