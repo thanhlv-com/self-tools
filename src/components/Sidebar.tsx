@@ -15,7 +15,8 @@ import {
   Zap,
   FileVideo,
   Image,
-  Shield
+  Shield,
+  Scissors
 } from "lucide-react";
 
 interface Tool {
@@ -89,6 +90,13 @@ const tools: Tool[] = [
     icon: Shield,
     description: "Complete JWT debugging & creation 📄✨",
     path: "/jwt-tool"
+  },
+  {
+    id: "image-size-converter",
+    name: "Image Size Converter",
+    icon: Scissors,
+    description: "Crop & resize to passport, visa formats",
+    path: "/image-size-converter"
   }
 ];
 

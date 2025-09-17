@@ -15,6 +15,7 @@ import TextCasePage from "./pages/TextCasePage";
 import VideoCompressorPage from "./pages/VideoCompressorPage";
 import ImageCompressorPage from "./pages/ImageCompressorPage";
 import JwtToolPage from "./pages/JwtToolPage";
+import ImageSizeConverterPage from "./pages/ImageSizeConverterPage";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/video-compressor" element={<VideoCompressorPage />} />
             <Route path="/image-compressor" element={<ImageCompressorPage />} />
             <Route path="/jwt-tool" element={<JwtToolPage />} />
+            <Route path="/image-size-converter" element={<ImageSizeConverterPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
