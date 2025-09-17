@@ -29,84 +29,104 @@ interface ValidationState {
 }
 
 const JWT_EXAMPLES = {
-  'basic-hs256': {
-    name: '🔐 Basic HS256 Example',
-    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+  'hs256': {
+    name: '🔐 HS256 (HMAC SHA-256)',
     secret: 'your-256-bit-secret',
     publicKey: '',
     privateKey: '',
     algorithm: 'HS256',
-    description: 'Simple user authentication token with basic claims'
+    description: 'Symmetric key algorithm using SHA-256'
   },
-  'user-session': {
-    name: '👤 User Session Token',
-    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzEyMzQ1IiwibmFtZSI6IkFsaWNlIFNtaXRoIiwiZW1haWwiOiJhbGljZUBleGFtcGxlLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDAsImF1ZCI6Im15LWFwcCIsImlzcyI6Im15LWFwcC1hdXRoIn0.kTZUTHn2xD72cG8yqaNG7ZQxdEPWgLPGu0eDUShOYhY',
-    secret: 'super-secure-session-key-2024',
-    publicKey: '',
-    privateKey: '',
-    algorithm: 'HS256',
-    description: 'Complete user session with role, email, and expiration'
-  },
-  'api-access': {
-    name: '🔑 API Access Token',
-    token: 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhcGktY2xpZW50LTc4OSIsImF1ZCI6ImFwaS12MS5teWFwcC5jb20iLCJpc3MiOiJhdXRoLm15YXBwLmNvbSIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoxNzAwMDA3MjAwLCJzY29wZSI6InJlYWQ6dXNlcnMgd3JpdGU6cG9zdHMiLCJjbGllbnRfaWQiOiJ3ZWJfYXBwX3YxIn0.sZzKw-GW_vk4MfYrPe-6h7v5ZuDY3N8XrJm5K2TlvBf_w4QxE3VyZmL0P9A7YsN4Jk8RqW6TpC2H1GfX3nM1Qw',
-    secret: 'api-signing-key-with-extra-security-2024!',
-    publicKey: '',
-    privateKey: '',
-    algorithm: 'HS512',
-    description: 'API client authentication with scopes and long expiration'
-  },
-  'rsa-example': {
-    name: '🔒 RSA256 Example',
-    token: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InJzYS1rZXktMSJ9.eyJzdWIiOiJhZG1pbi11c2VyIiwibmFtZSI6IkFkbWluIFVzZXIiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDAsImF1ZCI6Im15LWFwcCIsImlzcyI6Im15LWFwcC1hdXRoIiwicGVybWlzc2lvbnMiOlsidXNlcjpyZWFkIiwidXNlcjp3cml0ZSIsInBvc3Q6ZGVsZXRlIiwiYWRtaW46YWNjZXNzIl19.example-rsa-signature-would-be-here-but-this-is-demo-only',
-    secret: '',
-    publicKey: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4f5wg5l2hKsTeNem/V41\nfGnJm6gOdrj8ym3rFkEjWT2btf+JhwgOHiKIhd37jHT4+pD0tO4ZY0k2RSzKbOGH\nsjQCLMCgFq3PL6EoV1M2bPOgQz3SqBu2pE9i1JhT3Y8pFbJg2lhXyOCgCL4F6YLg\nCRhXNLY5tJ5pf0JQ7H4Ov/G8K4CXqKXZ0f3k7b8K1c4m0rH1j4zqUm3K4XZs5F4O\n5G4pVc8R3k7J5F4K7GHyO1MZDsW8jXz3JgcqJ1O3Q5G7o1e8m3HqP1g4w8oM5t5\nL1K8L2J9Q5G1kXZ0O1y4z8sGh4v5i3w7I5PZQ8j7qN4k2J5Z5j5P5j5w7I5PZQID\nAQAB\n-----END PUBLIC KEY-----',
-    privateKey: '',
-    algorithm: 'RS256',
-    description: 'Admin token with RSA signature and permission-based access'
-  },
-  'microservice': {
-    name: '🏗️ Microservice Token',
-    token: 'eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzZXJ2aWNlLXVzZXItbWdtdCIsImF1ZCI6WyJ1c2VyLXNlcnZpY2UiLCJub3RpZmljYXRpb24tc2VydmljZSJdLCJpc3MiOiJhcGktZ2F0ZXdheSIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoxNzAwMDA3MjAwLCJzZXJ2aWNlIjoidXNlci1tYW5hZ2VtZW50IiwidmVyc2lvbiI6InYyLjEuMyIsImVudmlyb25tZW50IjoicHJvZHVjdGlvbiIsInJlcXVlc3RfaWQiOiJyZXEtNzg5LWFiYy0xMjMifQ.Q3O2Y1S8H5L9qN7vMzP2W6gR4tK8J3xA5c0VeU9nB7mZ1zY3qS5pX8wE4rT6vI',
-    secret: 'microservice-inter-communication-key-2024',
+  'hs384': {
+    name: '🔐 HS384 (HMAC SHA-384)',
+    secret: 'your-384-bit-secret-key-for-stronger-security',
     publicKey: '',
     privateKey: '',
     algorithm: 'HS384',
-    description: 'Inter-service communication with environment and version info'
+    description: 'Symmetric key algorithm using SHA-384'
   },
-  'refresh-token': {
-    name: '🔄 Refresh Token',
-    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzk4NzY1IiwidG9rZW5fdHlwZSI6InJlZnJlc2giLCJjbGllbnRfaWQiOiJ3ZWJfYXBwIiwic2NvcGUiOiJvZmZsaW5lX2FjY2VzcyIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoxNzAyNTkyMDAwLCJqdGkiOiJyZWZyZXNoLXRva2VuLTEyMy00NTYtNzg5IiwiaXNzIjoibXlhcHAuY29tIiwiYXVkIjoibXlhcHAuY29tIn0.fH8vMq2N5Lg7XsY9Z1pK0jR6wC3nE4uA8tV5rQ2bD7x',
-    secret: 'refresh-token-signing-key-very-secure',
-    publicKey: '',
-    privateKey: '',
-    algorithm: 'HS256',
-    description: 'Long-lived refresh token for token renewal (90 days)'
-  },
-  'ecdsa-example': {
-    name: '🌐 ECDSA ES256 Token',
-    token: 'eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImVjZHNhLWtleS0xIn0.eyJzdWIiOiJtb2JpbGUtdXNlci0xMjMiLCJuYW1lIjoiTW9iaWxlIFVzZXIiLCJkZXZpY2VfaWQiOiJpb3MtZGV2aWNlLTc4OSIsImFwcF92ZXJzaW9uIjoiMi4zLjEiLCJwbGF0Zm9ybSI6ImlvcyIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoxNzAwMDA3MjAwLCJhdWQiOiJtb2JpbGUtYXBwIiwiaXNzIjoibW9iaWxlLWF1dGgtc2VydmljZSJ9.example-ecdsa-signature-demo-only',
-    secret: '',
-    publicKey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE4f5wg5l2hKsTeNem/V41fGnJm6gO\ndrj8ym3rFkEjWT2btf+JhwgOHiKIhd37jHT4+pD0tO4ZY0k2RSzKbOGHsjQCLMCg\nFq3PL6EoV1M2bPOgQz3SqBu2pE9i1JhT3Y8pFbJg2lhXyOCgCL4F6YLgCRhXNLY5\ntJ5pf0JQ7H4Ov/G8K4CXqKXZ0f3k7b8K1c4m0rH1j4zqUm3K4XZs5F4O5G4pVc8R\n-----END PUBLIC KEY-----',
-    privateKey: '',
-    algorithm: 'ES256',
-    description: 'Mobile app authentication with ECDSA and device info'
-  },
-  'admin-token': {
-    name: '👑 Admin SuperUser Token',
-    token: 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbi1zdXBlci0wMDEiLCJuYW1lIjoiU3VwZXIgQWRtaW4iLCJlbWFpbCI6InN1cGVyYWRtaW5AY29tcGFueS5jb20iLCJyb2xlIjoic3VwZXJfYWRtaW4iLCJwZXJtaXNzaW9ucyI6WyIqIl0sImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoxNzAwMDA3MjAwLCJhdWQiOlsiYWRtaW4tcGFuZWwiLCJhcGktdjEiLCJhcGktdjIiXSwiaXNzIjoiaW50ZXJuYWwtYXV0aCIsImRlcGFydG1lbnQiOiJJVCIsImVtcGxveWVlX2lkIjoiRU1QLTAwMSIsImNsZWFyYW5jZV9sZXZlbCI6ImwxMCJ9.7K8R5Q2W9jMvPzN4eY7nL6gH3rJ0aX8dF5oU1tB9cS6wZ3vY8mE4pQ1nK7jR5tA0',
-    secret: 'super-admin-ultra-secure-key-company-2024!!',
+  'hs512': {
+    name: '🔐 HS512 (HMAC SHA-512)',
+    secret: 'your-512-bit-secret-key-for-maximum-security-2024',
     publicKey: '',
     privateKey: '',
     algorithm: 'HS512',
-    description: 'Maximum privilege admin token with all permissions and metadata'
+    description: 'Symmetric key algorithm using SHA-512'
+  },
+  'rs256': {
+    name: '🔒 RS256 (RSA SHA-256)',
+    secret: '',
+    publicKey: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwJb5A9e4k4x2L8WcfX0e\nQw8V6y9B8K7L6e4rI9p3o2m1f8s7u4v5w6x7y8z9A0B1C2D3E4F5G6H7I8J9K0L1\nM2N3O4P5Q6R7S8T9U0V1W2X3Y4Z5a6b7c8d9e0f1g2h3i4j5k6l7m8n9o0p1q2r3\ns4t5u6v7w8x9y0z1A2B3C4D5E6F7G8H9I0J1K2L3M4N5O6P7Q8R9S0T1U2V3W4X5\nY6Z7a8b9c0d1e2f3g4h5i6j7k8l9m0n1o2p3q4r5s6t7u8v9w0x1y2z3A4B5C6D7\nE8F9G0H1I2J3K4L5M6N7O8P9Q0R1S2T3U4V5W6X7Y8Z9a0b1c2d3e4f5g6h7i8j9\nQIDAQAB\n-----END PUBLIC KEY-----',
+    privateKey: '-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDAluUD17iTjHYv\nxZx9fR5DDxXrL0Hwrsvp7isj2nejabV/yzu7i/nDrHvLzP0DQHULYPcThfZnh8n5\nK0L1M2N3O4P5Q6R7S8T9U0V1W2X3Y4Z5a6b7c8d9e0f1g2h3i4j5k6l7m8n9o0p1\nq2r3s4t5u6v7w8x9y0z1A2B3C4D5E6F7G8H9I0J1K2L3M4N5O6P7Q8R9S0T1U2V3\nW4X5Y6Z7a8b9c0d1e2f3g4h5i6j7k8l9m0n1o2p3q4r5s6t7u8v9w0x1y2z3A4B5\nC6D7E8F9G0H1I2J3K4L5M6N7O8P9Q0R1S2T3U4V5W6X7Y8Z9a0b1c2d3e4f5g6h7\ni8j9QIDAQABAgEBALtm8F5l3G6N2P8a9k4v1x7w2y9D3K8E4h6L2b9N7S1d5H8r\nV3c9k5P7m6z2j9T4F8w3q1L5y2N8o6t4e9u0a7i3B6c8D1F2G5h7J9k3L6M8n0P2\nQ5r7s9T1u4V6w8X0y2Z4a6B8c0D2e4F6g8H0i2J4k6L8m0n2O4p6Q8r0S2t4U6v8\nW0x2Y4z6A8b0C2d4E6f8G0h2I4j6K8l0M2n4o6P8q0R2s4T6u8V0w2X4y6Z8a0b2\nC4d6e8F0g2H4i6j8K0l2M4n6o8P0q2R4s6t8U0v2W4x6y8Z0a2b4C6d8e0F2g4H6\ni8j0K2l4M6n8o0P2QAoGBAOdT8y7L2v5n3K9g1F6j4E8m0a7z5P2w9R3s6V4y8B1\nC2D5e7G0h3I6j9K2l5M8n1o4P7q0r3S6t9u2V5w8X1y4Z7a0b3C6d9e2F5g8H1i4\nJ7k0l3M6n9o2P5q8r1S4t7U0v3W6x9y2Z5a8B1c4D7e0f3G6h9I2j5K8l1M4n7o0\nP3q6R9s2T5u8V1w4X7y0Z3a6b9c2d5E8f1G4h7I0j3K6l9M2n5O8p1q4R7s0T3u6\nV9w2X5y8Z1a4b7C0d3e6F9g2H5i8J1k4L7m0n3O6p9Q2r5s8T1u4V7w0X3y6Z9a2\nAoGBAOQ6v3f0G4T8k1B7u2e5y8I1l4o7r0U3x6A9d2g5j8M1p4s7v0Y3b6e9H2k5\nn8Q1t4w7z0C3f6I9l2o5R8u1x4A7d0g3J6m9p2s5V8y1B4e7h0K3n6q9T2w5z8C1\nf4I7l0o3R6u9x2A5d8g1J4m7p0s3V6y9B2e5h8K1n4q7T0w3z6C9f2I5l8o1r4U7\nx0A3d6g9J2m5p8s1V4y7B0e3h6K9n2q5T8w1z4C7f0I3l6o9r2U5x8A1d4g7J0m3\np6s9V2y5B8e1h4K7n0q3T6w9z2C5f8I1l4o7r0U3x6A9d2g5j8M1p4s7v0Y3b6e9\nAoGBAMG9j3k6n0P3q6R9s2T5u8V1w4X7y0Z3a6b9c2d5E8f1G4h7I0j3K6l9M2n5\nO8p1q4R7s0T3u6V9w2X5y8Z1a4b7C0d3e6F9g2H5i8J1k4L7m0n3O6p9Q2r5s8T1\nu4V7w0X3y6Z9a2b5C8d1e4F7g0H3i6J9k2L5m8n1O4p7Q0r3s6T9u2V5w8X1y4Z7\na0b3C6d9e2F5g8H1i4J7k0l3M6n9o2P5q8r1S4t7U0v3W6x9y2Z5a8B1c4D7e0f3\nG6h9I2j5K8l1M4n7o0P3q6R9s2T5u8V1w4X7y0Z3a6b9c2d5E8f1G4h7I0j3K6l9\nM2n5O8p1q4R7s0T3u6V9w2X5y8Z1a4b7C0d3e6F9g2H5i8J1k4L7m0n3O6p9Q2r5\ns8T1u4V7w0X3y6Z9a2\n-----END PRIVATE KEY-----',
+    algorithm: 'RS256',
+    description: 'RSA signature with SHA-256 (asymmetric)'
+  },
+  'rs384': {
+    name: '🔒 RS384 (RSA SHA-384)',
+    secret: '',
+    publicKey: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwJb5A9e4k4x2L8WcfX0e\nQw8V6y9B8K7L6e4rI9p3o2m1f8s7u4v5w6x7y8z9A0B1C2D3E4F5G6H7I8J9K0L1\nM2N3O4P5Q6R7S8T9U0V1W2X3Y4Z5a6b7c8d9e0f1g2h3i4j5k6l7m8n9o0p1q2r3\ns4t5u6v7w8x9y0z1A2B3C4D5E6F7G8H9I0J1K2L3M4N5O6P7Q8R9S0T1U2V3W4X5\nY6Z7a8b9c0d1e2f3g4h5i6j7k8l9m0n1o2p3q4r5s6t7u8v9w0x1y2z3A4B5C6D7\nE8F9G0H1I2J3K4L5M6N7O8P9Q0R1S2T3U4V5W6X7Y8Z9a0b1c2d3e4f5g6h7i8j9\nQIDAQAB\n-----END PUBLIC KEY-----',
+    privateKey: '-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDAluUD17iTjHYv\nxZx9fR5DDxXrL0Hwrsvp7isj2nejabV/yzu7i/nDrHvLzP0DQHULYPcThfZnh8n5\nK0L1M2N3O4P5Q6R7S8T9U0V1W2X3Y4Z5a6b7c8d9e0f1g2h3i4j5k6l7m8n9o0p1\nq2r3s4t5u6v7w8x9y0z1A2B3C4D5E6F7G8H9I0J1K2L3M4N5O6P7Q8R9S0T1U2V3\nW4X5Y6Z7a8b9c0d1e2f3g4h5i6j7k8l9m0n1o2p3q4r5s6t7u8v9w0x1y2z3A4B5\nC6D7E8F9G0H1I2J3K4L5M6N7O8P9Q0R1S2T3U4V5W6X7Y8Z9a0b1c2d3e4f5g6h7\ni8j9QIDAQABAgEBALtm8F5l3G6N2P8a9k4v1x7w2y9D3K8E4h6L2b9N7S1d5H8r\nV3c9k5P7m6z2j9T4F8w3q1L5y2N8o6t4e9u0a7i3B6c8D1F2G5h7J9k3L6M8n0P2\nQ5r7s9T1u4V6w8X0y2Z4a6B8c0D2e4F6g8H0i2J4k6L8m0n2O4p6Q8r0S2t4U6v8\nW0x2Y4z6A8b0C2d4E6f8G0h2I4j6K8l0M2n4o6P8q0R2s4T6u8V0w2X4y6Z8a0b2\nC4d6e8F0g2H4i6j8K0l2M4n6o8P0q2R4s6t8U0v2W4x6y8Z0a2b4C6d8e0F2g4H6\ni8j0K2l4M6n8o0P2QAoGBAOdT8y7L2v5n3K9g1F6j4E8m0a7z5P2w9R3s6V4y8B1\nC2D5e7G0h3I6j9K2l5M8n1o4P7q0r3S6t9u2V5w8X1y4Z7a0b3C6d9e2F5g8H1i4\nJ7k0l3M6n9o2P5q8r1S4t7U0v3W6x9y2Z5a8B1c4D7e0f3G6h9I2j5K8l1M4n7o0\nP3q6R9s2T5u8V1w4X7y0Z3a6b9c2d5E8f1G4h7I0j3K6l9M2n5O8p1q4R7s0T3u6\nV9w2X5y8Z1a4b7C0d3e6F9g2H5i8J1k4L7m0n3O6p9Q2r5s8T1u4V7w0X3y6Z9a2\nAoGBAOQ6v3f0G4T8k1B7u2e5y8I1l4o7r0U3x6A9d2g5j8M1p4s7v0Y3b6e9H2k5\nn8Q1t4w7z0C3f6I9l2o5R8u1x4A7d0g3J6m9p2s5V8y1B4e7h0K3n6q9T2w5z8C1\nf4I7l0o3R6u9x2A5d8g1J4m7p0s3V6y9B2e5h8K1n4q7T0w3z6C9f2I5l8o1r4U7\nx0A3d6g9J2m5p8s1V4y7B0e3h6K9n2q5T8w1z4C7f0I3l6o9r2U5x8A1d4g7J0m3\np6s9V2y5B8e1h4K7n0q3T6w9z2C5f8I1l4o7r0U3x6A9d2g5j8M1p4s7v0Y3b6e9\nAoGBAMG9j3k6n0P3q6R9s2T5u8V1w4X7y0Z3a6b9c2d5E8f1G4h7I0j3K6l9M2n5\nO8p1q4R7s0T3u6V9w2X5y8Z1a4b7C0d3e6F9g2H5i8J1k4L7m0n3O6p9Q2r5s8T1\nu4V7w0X3y6Z9a2b5C8d1e4F7g0H3i6J9k2L5m8n1O4p7Q0r3s6T9u2V5w8X1y4Z7\na0b3C6d9e2F5g8H1i4J7k0l3M6n9o2P5q8r1S4t7U0v3W6x9y2Z5a8B1c4D7e0f3\nG6h9I2j5K8l1M4n7o0P3q6R9s2T5u8V1w4X7y0Z3a6b9c2d5E8f1G4h7I0j3K6l9\nM2n5O8p1q4R7s0T3u6V9w2X5y8Z1a4b7C0d3e6F9g2H5i8J1k4L7m0n3O6p9Q2r5\ns8T1u4V7w0X3y6Z9a2\n-----END PRIVATE KEY-----',
+    algorithm: 'RS384',
+    description: 'RSA signature with SHA-384 (asymmetric)'
+  },
+  'rs512': {
+    name: '🔒 RS512 (RSA SHA-512)',
+    secret: '',
+    publicKey: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwJb5A9e4k4x2L8WcfX0e\nQw8V6y9B8K7L6e4rI9p3o2m1f8s7u4v5w6x7y8z9A0B1C2D3E4F5G6H7I8J9K0L1\nM2N3O4P5Q6R7S8T9U0V1W2X3Y4Z5a6b7c8d9e0f1g2h3i4j5k6l7m8n9o0p1q2r3\ns4t5u6v7w8x9y0z1A2B3C4D5E6F7G8H9I0J1K2L3M4N5O6P7Q8R9S0T1U2V3W4X5\nY6Z7a8b9c0d1e2f3g4h5i6j7k8l9m0n1o2p3q4r5s6t7u8v9w0x1y2z3A4B5C6D7\nE8F9G0H1I2J3K4L5M6N7O8P9Q0R1S2T3U4V5W6X7Y8Z9a0b1c2d3e4f5g6h7i8j9\nQIDAQAB\n-----END PUBLIC KEY-----',
+    privateKey: '-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDAluUD17iTjHYv\nxZx9fR5DDxXrL0Hwrsvp7isj2nejabV/yzu7i/nDrHvLzP0DQHULYPcThfZnh8n5\nK0L1M2N3O4P5Q6R7S8T9U0V1W2X3Y4Z5a6b7c8d9e0f1g2h3i4j5k6l7m8n9o0p1\nq2r3s4t5u6v7w8x9y0z1A2B3C4D5E6F7G8H9I0J1K2L3M4N5O6P7Q8R9S0T1U2V3\nW4X5Y6Z7a8b9c0d1e2f3g4h5i6j7k8l9m0n1o2p3q4r5s6t7u8v9w0x1y2z3A4B5\nC6D7E8F9G0H1I2J3K4L5M6N7O8P9Q0R1S2T3U4V5W6X7Y8Z9a0b1c2d3e4f5g6h7\ni8j9QIDAQABAgEBALtm8F5l3G6N2P8a9k4v1x7w2y9D3K8E4h6L2b9N7S1d5H8r\nV3c9k5P7m6z2j9T4F8w3q1L5y2N8o6t4e9u0a7i3B6c8D1F2G5h7J9k3L6M8n0P2\nQ5r7s9T1u4V6w8X0y2Z4a6B8c0D2e4F6g8H0i2J4k6L8m0n2O4p6Q8r0S2t4U6v8\nW0x2Y4z6A8b0C2d4E6f8G0h2I4j6K8l0M2n4o6P8q0R2s4T6u8V0w2X4y6Z8a0b2\nC4d6e8F0g2H4i6j8K0l2M4n6o8P0q2R4s6t8U0v2W4x6y8Z0a2b4C6d8e0F2g4H6\ni8j0K2l4M6n8o0P2QAoGBAOdT8y7L2v5n3K9g1F6j4E8m0a7z5P2w9R3s6V4y8B1\nC2D5e7G0h3I6j9K2l5M8n1o4P7q0r3S6t9u2V5w8X1y4Z7a0b3C6d9e2F5g8H1i4\nJ7k0l3M6n9o2P5q8r1S4t7U0v3W6x9y2Z5a8B1c4D7e0f3G6h9I2j5K8l1M4n7o0\nP3q6R9s2T5u8V1w4X7y0Z3a6b9c2d5E8f1G4h7I0j3K6l9M2n5O8p1q4R7s0T3u6\nV9w2X5y8Z1a4b7C0d3e6F9g2H5i8J1k4L7m0n3O6p9Q2r5s8T1u4V7w0X3y6Z9a2\nAoGBAOQ6v3f0G4T8k1B7u2e5y8I1l4o7r0U3x6A9d2g5j8M1p4s7v0Y3b6e9H2k5\nn8Q1t4w7z0C3f6I9l2o5R8u1x4A7d0g3J6m9p2s5V8y1B4e7h0K3n6q9T2w5z8C1\nf4I7l0o3R6u9x2A5d8g1J4m7p0s3V6y9B2e5h8K1n4q7T0w3z6C9f2I5l8o1r4U7\nx0A3d6g9J2m5p8s1V4y7B0e3h6K9n2q5T8w1z4C7f0I3l6o9r2U5x8A1d4g7J0m3\np6s9V2y5B8e1h4K7n0q3T6w9z2C5f8I1l4o7r0U3x6A9d2g5j8M1p4s7v0Y3b6e9\nAoGBAMG9j3k6n0P3q6R9s2T5u8V1w4X7y0Z3a6b9c2d5E8f1G4h7I0j3K6l9M2n5\nO8p1q4R7s0T3u6V9w2X5y8Z1a4b7C0d3e6F9g2H5i8J1k4L7m0n3O6p9Q2r5s8T1\nu4V7w0X3y6Z9a2b5C8d1e4F7g0H3i6J9k2L5m8n1O4p7Q0r3s6T9u2V5w8X1y4Z7\na0b3C6d9e2F5g8H1i4J7k0l3M6n9o2P5q8r1S4t7U0v3W6x9y2Z5a8B1c4D7e0f3\nG6h9I2j5K8l1M4n7o0P3q6R9s2T5u8V1w4X7y0Z3a6b9c2d5E8f1G4h7I0j3K6l9\nM2n5O8p1q4R7s0T3u6V9w2X5y8Z1a4b7C0d3e6F9g2H5i8J1k4L7m0n3O6p9Q2r5\ns8T1u4V7w0X3y6Z9a2\n-----END PRIVATE KEY-----',
+    algorithm: 'RS512',
+    description: 'RSA signature with SHA-512 (asymmetric)'
+  },
+  'ps256': {
+    name: '🔒 PS256 (RSA-PSS SHA-256)',
+    secret: '',
+    publicKey: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwJb5A9e4k4x2L8WcfX0e\nQw8V6y9B8K7L6e4rI9p3o2m1f8s7u4v5w6x7y8z9A0B1C2D3E4F5G6H7I8J9K0L1\nM2N3O4P5Q6R7S8T9U0V1W2X3Y4Z5a6b7c8d9e0f1g2h3i4j5k6l7m8n9o0p1q2r3\ns4t5u6v7w8x9y0z1A2B3C4D5E6F7G8H9I0J1K2L3M4N5O6P7Q8R9S0T1U2V3W4X5\nY6Z7a8b9c0d1e2f3g4h5i6j7k8l9m0n1o2p3q4r5s6t7u8v9w0x1y2z3A4B5C6D7\nE8F9G0H1I2J3K4L5M6N7O8P9Q0R1S2T3U4V5W6X7Y8Z9a0b1c2d3e4f5g6h7i8j9\nQIDAQAB\n-----END PUBLIC KEY-----',
+    privateKey: '-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDAluUD17iTjHYv\nxZx9fR5DDxXrL0Hwrsvp7isj2nejabV/yzu7i/nDrHvLzP0DQHULYPcThfZnh8n5\nK0L1M2N3O4P5Q6R7S8T9U0V1W2X3Y4Z5a6b7c8d9e0f1g2h3i4j5k6l7m8n9o0p1\nq2r3s4t5u6v7w8x9y0z1A2B3C4D5E6F7G8H9I0J1K2L3M4N5O6P7Q8R9S0T1U2V3\nW4X5Y6Z7a8b9c0d1e2f3g4h5i6j7k8l9m0n1o2p3q4r5s6t7u8v9w0x1y2z3A4B5\nC6D7E8F9G0H1I2J3K4L5M6N7O8P9Q0R1S2T3U4V5W6X7Y8Z9a0b1c2d3e4f5g6h7\ni8j9QIDAQABAgEBALtm8F5l3G6N2P8a9k4v1x7w2y9D3K8E4h6L2b9N7S1d5H8r\nV3c9k5P7m6z2j9T4F8w3q1L5y2N8o6t4e9u0a7i3B6c8D1F2G5h7J9k3L6M8n0P2\nQ5r7s9T1u4V6w8X0y2Z4a6B8c0D2e4F6g8H0i2J4k6L8m0n2O4p6Q8r0S2t4U6v8\nW0x2Y4z6A8b0C2d4E6f8G0h2I4j6K8l0M2n4o6P8q0R2s4T6u8V0w2X4y6Z8a0b2\nC4d6e8F0g2H4i6j8K0l2M4n6o8P0q2R4s6t8U0v2W4x6y8Z0a2b4C6d8e0F2g4H6\ni8j0K2l4M6n8o0P2QAoGBAOdT8y7L2v5n3K9g1F6j4E8m0a7z5P2w9R3s6V4y8B1\nC2D5e7G0h3I6j9K2l5M8n1o4P7q0r3S6t9u2V5w8X1y4Z7a0b3C6d9e2F5g8H1i4\nJ7k0l3M6n9o2P5q8r1S4t7U0v3W6x9y2Z5a8B1c4D7e0f3G6h9I2j5K8l1M4n7o0\nP3q6R9s2T5u8V1w4X7y0Z3a6b9c2d5E8f1G4h7I0j3K6l9M2n5O8p1q4R7s0T3u6\nV9w2X5y8Z1a4b7C0d3e6F9g2H5i8J1k4L7m0n3O6p9Q2r5s8T1u4V7w0X3y6Z9a2\nAoGBAOQ6v3f0G4T8k1B7u2e5y8I1l4o7r0U3x6A9d2g5j8M1p4s7v0Y3b6e9H2k5\nn8Q1t4w7z0C3f6I9l2o5R8u1x4A7d0g3J6m9p2s5V8y1B4e7h0K3n6q9T2w5z8C1\nf4I7l0o3R6u9x2A5d8g1J4m7p0s3V6y9B2e5h8K1n4q7T0w3z6C9f2I5l8o1r4U7\nx0A3d6g9J2m5p8s1V4y7B0e3h6K9n2q5T8w1z4C7f0I3l6o9r2U5x8A1d4g7J0m3\np6s9V2y5B8e1h4K7n0q3T6w9z2C5f8I1l4o7r0U3x6A9d2g5j8M1p4s7v0Y3b6e9\nAoGBAMG9j3k6n0P3q6R9s2T5u8V1w4X7y0Z3a6b9c2d5E8f1G4h7I0j3K6l9M2n5\nO8p1q4R7s0T3u6V9w2X5y8Z1a4b7C0d3e6F9g2H5i8J1k4L7m0n3O6p9Q2r5s8T1\nu4V7w0X3y6Z9a2b5C8d1e4F7g0H3i6J9k2L5m8n1O4p7Q0r3s6T9u2V5w8X1y4Z7\na0b3C6d9e2F5g8H1i4J7k0l3M6n9o2P5q8r1S4t7U0v3W6x9y2Z5a8B1c4D7e0f3\nG6h9I2j5K8l1M4n7o0P3q6R9s2T5u8V1w4X7y0Z3a6b9c2d5E8f1G4h7I0j3K6l9\nM2n5O8p1q4R7s0T3u6V9w2X5y8Z1a4b7C0d3e6F9g2H5i8J1k4L7m0n3O6p9Q2r5\ns8T1u4V7w0X3y6Z9a2\n-----END PRIVATE KEY-----',
+    algorithm: 'PS256',
+    description: 'RSA-PSS signature with SHA-256 (asymmetric)'
+  },
+  'es256': {
+    name: '🌐 ES256 (ECDSA SHA-256)',
+    secret: '',
+    publicKey: '-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEn2Le7+rjNyDbsNB15fG4h8/2fV4r\nG3fM5x7L2P9k0s1m8n2o3p4q5r6s7t8u9v0w1x2y3z4A5b6c7d8e9f0g1h2i3j4k\n5l6m7n8o9p0q1r2s3t4u5v6w7x8y9z0A1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q\n7r8s9t0u1v2w3x4y5z6A7b8c9d0e1f2g3h4i5j6k7l8m9n0o1p2q3r4s5t6u7v8w\n-----END PUBLIC KEY-----',
+    privateKey: '-----BEGIN PRIVATE KEY-----\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgp2DV3b6A9j8K1m5N\n0s2r4q7L8x3y6z9C2d5f8g1h4i7k0s3t6u9v2w5x8y1z4A7b0c3d6e9f2g5h8i1j\nk0l3m6n9o2p5q8r1s4t7u0v3w6x9y2z5A8b1c4d7e0f3g6h9i2j5k8l1m4n7o0p3\nq6r9s2t5u8v1w4x7y0z3a6b9c2d5e8f1g4h7i0j3k6l9m2n5o8p1q4r7s0t3u6v9\n-----END PRIVATE KEY-----',
+    algorithm: 'ES256',
+    description: 'ECDSA signature with SHA-256 (asymmetric)'
+  },
+  'es384': {
+    name: '🌐 ES384 (ECDSA SHA-384)',
+    secret: '',
+    publicKey: '-----BEGIN PUBLIC KEY-----\nMHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEn2Le7+rjNyDbsNB15fG4h8/2fV4rG3fM\n5x7L2P9k0s1m8n2o3p4q5r6s7t8u9v0w1x2y3z4A5b6c7d8e9f0g1h2i3j4k5l6m\n7n8o9p0q1r2s3t4u5v6w7x8y9z0A1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s\n9t0u1v2w3x4y5z6A7b8c9d0e1f2g3h4i5j6k7l8m9n0o1p2q3r4s5t6u7v8w9x0y\n-----END PUBLIC KEY-----',
+    privateKey: '-----BEGIN PRIVATE KEY-----\nMIG2AgEAMBAGByqGSM49AgEGBSuBBAAiBIGeMIGbAgEBBDCnYNXdvoD2PwrWbk3S\nzavirsvy=fbrNqRo7cchx9TJpvgMGXh7uoKhRANCAASfYt7v6uM3INuw0HXl8biHz\n/Z9XisbECKdg1d2+gPY/CtZuTdLNq+Kuy/Ld5ubm5ubm5ubm5ubm5ubm5ubm5ubm\n5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm\n5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm\n-----END PRIVATE KEY-----',
+    algorithm: 'ES384',
+    description: 'ECDSA signature with SHA-384 (asymmetric)'
+  },
+  'es512': {
+    name: '🌐 ES512 (ECDSA SHA-512)',
+    secret: '',
+    publicKey: '-----BEGIN PUBLIC KEY-----\nMIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBn2Le7+rjNyDbsNB15fG4h8/2fV4r\nG3fM5x7L2P9k0s1m8n2o3p4q5r6s7t8u9v0w1x2y3z4A5b6c7d8e9f0g1h2i3j4k\n5l6m7n8o9p0q1r2s3t4u5v6w7x8y9z0A1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q\n7r8s9t0u1v2w3x4y5z6A7b8c9d0e1f2g3h4i5j6k7l8m9n0o1p2q3r4s5t6u7v8w\n9x0y1z2A3b4c5d6e7f8g9h0i1j2k3l4m5n6o7p8q9r0s1t2u3v4w5x6y7z8A9b0c\n-----END PUBLIC KEY-----',
+    privateKey: '-----BEGIN PRIVATE KEY-----\nMIHuAgEAMBAGByqGSM49AgEGBSuBBAAjBIHWMIHTAgEBBEIAp2DV3b6A9j8K1m5N\n0s2r4q7L8vbL8vbL8vbL8vbL8vbL8vbL8vbL8vbL8vbL8vbL8vbL8vbL8vbL8vbL\n8vbL8vbL8vbL8vbL8vbL8vbL8vbL8vbL8vbL8vbL8vbL8vbL8vbLoUQDQgAEn2Le\n7+rjNyDbsNB15fG4h8/2fV4rG3fM5x7L2P9k0s1m8n2o3p4q5r6s7t8u9v0w1x2y\n3z4A5b6c7d8e9f0g1h2i3j4k5l6m7n8o9p0q1r2s3t4u5v6w7x8y9z0A1b2c3d4e\n5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6A7b8c9d0e1f2g3h4i5j6k\n7l8m9n0o1p2q3r4s5t6u7v8w9x0y1z2A3b4c5d6e7f8g9h0i1j2k3l4m5n6o7p8q\n9r0s1t2u3v4w5x6y7z8A9b0c\n-----END PRIVATE KEY-----',
+    algorithm: 'ES512',
+    description: 'ECDSA signature with SHA-512 (asymmetric)'
   }
 };
 
 type ExampleKey = keyof typeof JWT_EXAMPLES;
 
+const DEFAULT_PAYLOAD = {
+  "sub": "1234567890",
+  "name": "John Doe",
+  "iat": Math.floor(Date.now() / 1000),
+  "exp": Math.floor(Date.now() / 1000) + (60 * 60) // 1 hour from now
+};
+
+const DEFAULT_HEADER = {
+  "alg": "HS256",
+  "typ": "JWT"
+};
+
 export const JwtTool: React.FC = () => {
-  const [token, setToken] = useState(JWT_EXAMPLES['basic-hs256'].token);
+  const [token, setToken] = useState('');
   const [secret, setSecret] = useState('your-256-bit-secret');
   const [publicKey, setPublicKey] = useState('');
   const [privateKey, setPrivateKey] = useState('');
@@ -316,27 +336,60 @@ export const JwtTool: React.FC = () => {
     return new Date(timestamp * 1000).toLocaleString();
   };
 
-  const loadExampleToken = (exampleKey: ExampleKey) => {
+  const loadExampleToken = async (exampleKey: ExampleKey) => {
     const example = JWT_EXAMPLES[exampleKey];
     setIsLoadingExample(true);
     
-    // Set all values atomically
-    setToken(example.token);
-    setSecret(example.secret);
-    setPublicKey(example.publicKey);
-    setPrivateKey(example.privateKey);
-    setSelectedTab(example.algorithm.startsWith('HS') ? 'hmac' : 'rsa');
-    setIsEditing(false);
-    
-    // Update key signature to match the new example
-    const newKeySignature = `${example.secret}|${example.privateKey}|${example.algorithm}`;
-    setLastKeySignature(newKeySignature);
-    
-    // Reset loading state after a brief delay
-    setTimeout(() => {
-      setIsLoadingExample(false);
-      toast.success(`Loaded ${example.name}! 🎯`);
-    }, 100);
+    try {
+      // Use current payload or default if no token exists
+      let currentPayload = DEFAULT_PAYLOAD;
+      let currentHeader = { ...DEFAULT_HEADER, alg: example.algorithm };
+      
+      if (validation.decoded) {
+        currentPayload = validation.decoded.payload;
+        currentHeader = { ...validation.decoded.header, alg: example.algorithm };
+      }
+      
+      // Generate new token with current payload and new algorithm/keys
+      const newToken = await generateNewToken(currentHeader, currentPayload);
+      
+      if (newToken) {
+        // Set everything atomically to avoid useEffect conflicts
+        setToken(newToken);
+        setSecret(example.secret);
+        setPublicKey(example.publicKey);
+        setPrivateKey(example.privateKey);
+        setSelectedTab(example.algorithm.startsWith('HS') ? 'hmac' : 'rsa');
+        setIsEditing(false);
+        
+        // Update key signature to prevent auto-regeneration loop
+        const newKeySignature = `${example.secret}|${example.privateKey}|${example.algorithm}`;
+        setLastKeySignature(newKeySignature);
+        
+        toast.success(`Switched to ${example.name}! 🎯`);
+      } else {
+        // If we can't generate a token (missing private key for asymmetric)
+        // Still set the keys for demo purposes
+        setSecret(example.secret);
+        setPublicKey(example.publicKey);
+        setPrivateKey(example.privateKey);
+        setSelectedTab(example.algorithm.startsWith('HS') ? 'hmac' : 'rsa');
+        setIsEditing(false);
+        
+        // Create a demo token structure for display only
+        const demoToken = `${btoa(JSON.stringify(currentHeader))}.${btoa(JSON.stringify(currentPayload))}.demo-signature-provide-${example.algorithm.startsWith('HS') ? 'secret' : 'private'}-key`;
+        setToken(demoToken);
+        
+        toast.success(`Loaded ${example.name} - provide ${example.algorithm.startsWith('HS') ? 'secret key' : 'private key'} to generate valid signature! 🔑`);
+      }
+    } catch (error) {
+      console.error('Error loading example:', error);
+      toast.error('Failed to load example');
+    } finally {
+      setTimeout(() => {
+        setIsLoadingExample(false);
+      }, 200);
+    }
   };
 
   const addCommonClaims = () => {
@@ -413,8 +466,8 @@ export const JwtTool: React.FC = () => {
       // Create a signature of current keys and algorithm to detect changes
       const currentKeySignature = `${secret}|${privateKey}|${validation.decoded.header.alg}`;
       
-      // Only regenerate if keys actually changed
-      if (currentKeySignature === lastKeySignature) return;
+      // Only regenerate if keys actually changed and we have a valid lastKeySignature
+      if (!lastKeySignature || currentKeySignature === lastKeySignature) return;
       
       const { header, payload } = validation.decoded;
       const newToken = await generateNewToken(header, payload);
@@ -426,13 +479,28 @@ export const JwtTool: React.FC = () => {
       }
     };
     
-    const timeoutId = setTimeout(autoRegenerateToken, 300);
+    const timeoutId = setTimeout(autoRegenerateToken, 500);
     return () => clearTimeout(timeoutId);
-  }, [secret, privateKey, validation.decoded, token, isEditing, lastKeySignature, isLoadingExample]);
+  }, [secret, privateKey, validation.decoded?.header.alg, isEditing, lastKeySignature, isLoadingExample]); // Remove token dependency to avoid loops
 
-  // Initial load
+  // Initial load - create default token
   useEffect(() => {
-    processToken(token);
+    const initializeToken = async () => {
+      if (!token) {
+        // Generate initial token with default payload and HS256
+        const initialToken = await generateNewToken(DEFAULT_HEADER, DEFAULT_PAYLOAD);
+        if (initialToken) {
+          setToken(initialToken);
+          setSecret('your-256-bit-secret');
+          // Set initial key signature to prevent auto-regeneration
+          const initialKeySignature = `your-256-bit-secret||HS256`;
+          setLastKeySignature(initialKeySignature);
+        }
+      }
+      // Don't call processToken here to avoid double processing
+    };
+    
+    initializeToken();
   }, []);
 
   const getSignatureStatus = () => {
