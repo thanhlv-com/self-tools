@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Link, useLocation } from "react-router-dom";
 import { 
   Code2, 
   FileText, 
@@ -21,6 +22,7 @@ interface Tool {
   name: string;
   icon: React.ComponentType<{ className?: string }>;
   description: string;
+  path: string;
 }
 
 const tools: Tool[] = [
@@ -28,49 +30,57 @@ const tools: Tool[] = [
     id: "json-viewer",
     name: "JSON Viewer",
     icon: Code2,
-    description: "Format and view JSON data"
+    description: "Format and view JSON data",
+    path: "/json-viewer"
   },
   {
     id: "json-compare",
     name: "JSON Compare",
     icon: FileText,
-    description: "Compare multiple JSON objects"
+    description: "Compare multiple JSON objects",
+    path: "/json-compare"
   },
   {
     id: "base64",
     name: "Base64 Encode/Decode",
     icon: Key,
-    description: "Base64 encoding and decoding"
+    description: "Base64 encoding and decoding",
+    path: "/base64"
   },
   {
     id: "url-encode",
     name: "URL Encode/Decode",
     icon: Shuffle,
-    description: "URL encoding and decoding"
+    description: "URL encoding and decoding",
+    path: "/url-encode"
   },
   {
     id: "hash",
     name: "Hash Generator",
     icon: Hash,
-    description: "Generate MD5, SHA-256 hashes"
+    description: "Generate MD5, SHA-256 hashes",
+    path: "/hash"
   },
   {
     id: "text-case",
     name: "Text Case Converter",
     icon: Type,
-    description: "Convert text cases"
+    description: "Convert text cases",
+    path: "/text-case"
   },
   {
     id: "video-compressor",
     name: "Video Compressor",
     icon: FileVideo,
-    description: "Reduce video file sizes"
+    description: "Reduce video file sizes",
+    path: "/video-compressor"
   },
   {
     id: "jwt-tool",
     name: "JWT Toolkit",
     icon: Shield,
-    description: "Complete JWT debugging & creation 📄✨"
+    description: "Complete JWT debugging & creation 📄✨",
+    path: "/jwt-tool"
   }
 ];
 
@@ -79,8 +89,9 @@ interface SidebarProps {
   onToolSelect?: (toolId: string) => void;
 }
 
-export const Sidebar = ({ activeTool = "json-viewer", onToolSelect }: SidebarProps) => {
+export const Sidebar = ({ activeTool, onToolSelect }: SidebarProps) => {
   const [collapsed, setCollapsed] = useState(false);
+  const location = useLocation();
 
   return (
     <div className={cn(
@@ -147,7 +158,7 @@ export const Sidebar = ({ activeTool = "json-viewer", onToolSelect }: SidebarPro
       <nav className="relative z-10 p-4 space-y-2">
         {tools.map((tool, index) => {
           const Icon = tool.icon;
-          const isActive = activeTool === tool.id;
+          const isActive = activeTool === tool.id || location.pathname === tool.path;
           
           return (
             <div
@@ -164,8 +175,9 @@ export const Sidebar = ({ activeTool = "json-viewer", onToolSelect }: SidebarPro
                     ? "bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-cyan-500/20 border-pink-400/30 shadow-lg shadow-pink-500/20 scale-[1.02]"
                     : "border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/10"
                 )}
-                onClick={() => onToolSelect?.(tool.id)}
+                asChild
               >
+                <Link to={tool.path}>
                 {/* Active indicator */}
                 {isActive && (
                   <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-pink-400 to-cyan-400 rounded-r-full"></div>
@@ -217,6 +229,7 @@ export const Sidebar = ({ activeTool = "json-viewer", onToolSelect }: SidebarPro
                     <Zap className="h-4 w-4 text-cyan-400 animate-pulse" />
                   </div>
                 )}
+                </Link>
               </Button>
             </div>
           );

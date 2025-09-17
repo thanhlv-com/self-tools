@@ -6,6 +6,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import JsonViewerPage from "./pages/JsonViewerPage";
+import JsonComparePage from "./pages/JsonComparePage"; 
+import Base64Page from "./pages/Base64Page";
+import UrlEncodePage from "./pages/UrlEncodePage";
+import HashPage from "./pages/HashPage";
+import TextCasePage from "./pages/TextCasePage";
+import VideoCompressorPage from "./pages/VideoCompressorPage";
+import JwtToolPage from "./pages/JwtToolPage";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +31,14 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/json-viewer" element={<JsonViewerPage />} />
+            <Route path="/json-compare" element={<JsonComparePage />} />
+            <Route path="/base64" element={<Base64Page />} />
+            <Route path="/url-encode" element={<UrlEncodePage />} />
+            <Route path="/hash" element={<HashPage />} />
+            <Route path="/text-case" element={<TextCasePage />} />
+            <Route path="/video-compressor" element={<VideoCompressorPage />} />
+            <Route path="/jwt-tool" element={<JwtToolPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
