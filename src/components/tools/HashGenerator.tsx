@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Copy, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import blake2b from "blake2b";
+import { sha3_256, sha3_512, keccak256 } from "js-sha3";
 
 export const HashGenerator = () => {
   const [input, setInput] = useState("");
@@ -47,6 +49,34 @@ export const HashGenerator = () => {
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   };
 
+  const generateSHA384 = async (text: string): Promise<string> => {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text);
+    const hashBuffer = await crypto.subtle.digest('SHA-384', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  };
+
+  const generateBLAKE2b = (text: string): string => {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text);
+    const hash = blake2b(32);
+    hash.update(data);
+    return hash.digest('hex');
+  };
+
+  const generateSHA3_256 = (text: string): string => {
+    return sha3_256(text);
+  };
+
+  const generateSHA3_512 = (text: string): string => {
+    return sha3_512(text);
+  };
+
+  const generateKeccak256 = (text: string): string => {
+    return keccak256(text);
+  };
+
   const generateAllHashes = async () => {
     if (!input.trim()) {
       toast({
@@ -61,16 +91,26 @@ export const HashGenerator = () => {
       const results = await Promise.all([
         generateSHA256(input),
         generateSHA1(input),
+        generateSHA384(input),
         generateSHA512(input),
         // MD5 might not be available in all browsers
         generateMD5(input).catch(() => "Not supported")
       ]);
 
+      const syncResults = {
+        'BLAKE2b': generateBLAKE2b(input),
+        'SHA3-256': generateSHA3_256(input),
+        'SHA3-512': generateSHA3_512(input),
+        'Keccak-256': generateKeccak256(input)
+      };
+
       setHashes({
         'SHA-256': results[0],
         'SHA-1': results[1],
-        'SHA-512': results[2],
-        'MD5': results[3]
+        'SHA-384': results[2],
+        'SHA-512': results[3],
+        'MD5': results[4],
+        ...syncResults
       });
 
       toast({
@@ -103,7 +143,7 @@ export const HashGenerator = () => {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-foreground mb-2">Hash Generator</h2>
-        <p className="text-muted-foreground">Generate MD5, SHA-1, SHA-256, and SHA-512 hashes</p>
+        <p className="text-muted-foreground">Generate MD5, SHA-1, SHA-256, SHA-384, SHA-512, BLAKE2b, SHA3, and Keccak hashes</p>
       </div>
 
       <Card>
@@ -167,7 +207,7 @@ export const HashGenerator = () => {
           <CardTitle>Hash Information</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
             <div>
               <h4 className="font-semibold mb-2">MD5</h4>
               <p className="text-muted-foreground">128-bit hash function, fast but cryptographically broken</p>
@@ -181,8 +221,28 @@ export const HashGenerator = () => {
               <p className="text-muted-foreground">256-bit hash function, cryptographically secure</p>
             </div>
             <div>
+              <h4 className="font-semibold mb-2">SHA-384</h4>
+              <p className="text-muted-foreground">384-bit hash function, truncated SHA-512</p>
+            </div>
+            <div>
               <h4 className="font-semibold mb-2">SHA-512</h4>
               <p className="text-muted-foreground">512-bit hash function, highest security</p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-2">BLAKE2b</h4>
+              <p className="text-muted-foreground">Fast, secure hash function, alternative to SHA-2</p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-2">SHA3-256</h4>
+              <p className="text-muted-foreground">256-bit SHA-3, based on Keccak algorithm</p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-2">SHA3-512</h4>
+              <p className="text-muted-foreground">512-bit SHA-3, latest NIST standard</p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-2">Keccak-256</h4>
+              <p className="text-muted-foreground">Original Keccak algorithm, used in Ethereum</p>
             </div>
           </div>
         </CardContent>
