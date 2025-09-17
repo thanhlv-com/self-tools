@@ -27,10 +27,9 @@ interface ValidationState {
   signatureError: string | null;
 }
 
-const EXAMPLE_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
 
 export const JwtChecker: React.FC = () => {
-  const [token, setToken] = useState(EXAMPLE_TOKEN);
+  const [token, setToken] = useState('');
   const [secret, setSecret] = useState('your-256-bit-secret');
   const [publicKey, setPublicKey] = useState('');
   const [validation, setValidation] = useState<ValidationState>({
@@ -158,12 +157,6 @@ export const JwtChecker: React.FC = () => {
     return new Date(timestamp * 1000).toLocaleString();
   };
 
-  const loadExampleToken = () => {
-    setToken(EXAMPLE_TOKEN);
-    setSecret('your-256-bit-secret');
-    setPublicKey('');
-    setSelectedTab('hmac');
-  };
 
   // Auto-switch tabs based on algorithm
   useEffect(() => {
@@ -181,10 +174,6 @@ export const JwtChecker: React.FC = () => {
     return () => clearTimeout(timeoutId);
   }, [token, secret, publicKey]);
 
-  // Initial load
-  useEffect(() => {
-    processToken(token);
-  }, []);
 
   const getSignatureStatus = () => {
     if (validation.isSignatureValid === true) {
@@ -223,17 +212,12 @@ export const JwtChecker: React.FC = () => {
               <Shield className="h-5 w-5 text-blue-500" />
               <CardTitle>JWT Debugger 🔍🌐</CardTitle>
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={loadExampleToken}>
-                Load Example
-              </Button>
-              {validation.isValidFormat && (
-                <Badge className={signatureStatus.className}>
-                  {signatureStatus.icon}
-                  <span className="ml-1">{signatureStatus.text}</span>
-                </Badge>
-              )}
-            </div>
+            {validation.isValidFormat && (
+              <Badge className={signatureStatus.className}>
+                {signatureStatus.icon}
+                <span className="ml-1">{signatureStatus.text}</span>
+              </Badge>
+            )}
           </div>
           <CardDescription>
             Decode and verify JSON Web Tokens. For your protection, all validation happens in your browser.
