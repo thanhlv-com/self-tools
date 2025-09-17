@@ -2,71 +2,83 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Developer Tools Design System - Dark theme focused */
+/* Modern Developer Tools Design System */
 
 @layer base {
   :root {
-    /* Dark theme base colors */
-    --background: 220 13% 9%;
-    --foreground: 220 14% 95%;
+    /* Beautiful dark theme with modern gradients */
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
 
-    --card: 220 13% 11%;
-    --card-foreground: 220 14% 95%;
+    --card: 224 71% 6%;
+    --card-foreground: 213 31% 91%;
 
-    --popover: 220 13% 11%;
-    --popover-foreground: 220 14% 95%;
+    --popover: 224 71% 6%;
+    --popover-foreground: 213 31% 91%;
 
-    /* Accent color - bright blue for developer tools */
-    --primary: 217 91% 60%;
-    --primary-foreground: 220 13% 9%;
+    /* Vibrant primary with electric blue */
+    --primary: 217 100% 64%;
+    --primary-foreground: 224 71% 4%;
+    --primary-glow: 217 100% 74%;
 
-    --secondary: 220 13% 15%;
-    --secondary-foreground: 220 14% 95%;
+    --secondary: 215 28% 17%;
+    --secondary-foreground: 213 31% 91%;
 
-    --muted: 220 13% 15%;
-    --muted-foreground: 220 9% 55%;
+    --muted: 215 28% 14%;
+    --muted-foreground: 217 10% 64%;
 
-    --accent: 220 13% 15%;
-    --accent-foreground: 220 14% 95%;
+    --accent: 215 28% 17%;
+    --accent-foreground: 213 31% 91%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 220 14% 95%;
+    --destructive: 0 90% 63%;
+    --destructive-foreground: 213 31% 91%;
 
-    --border: 220 13% 20%;
-    --input: 220 13% 15%;
-    --ring: 217 91% 60%;
+    --border: 215 28% 18%;
+    --input: 215 28% 12%;
+    --ring: 217 100% 64%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    /* Sidebar colors for tool navigation */
-    --sidebar-background: 220 13% 7%;
-    --sidebar-foreground: 220 14% 95%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 220 13% 9%;
-    --sidebar-accent: 220 13% 13%;
-    --sidebar-accent-foreground: 220 14% 95%;
-    --sidebar-border: 220 13% 18%;
-    --sidebar-ring: 217 91% 60%;
+    /* Enhanced sidebar with depth */
+    --sidebar-background: 224 71% 3%;
+    --sidebar-foreground: 213 31% 91%;
+    --sidebar-primary: 217 100% 64%;
+    --sidebar-primary-foreground: 224 71% 4%;
+    --sidebar-accent: 215 28% 12%;
+    --sidebar-accent-foreground: 213 31% 91%;
+    --sidebar-border: 215 28% 14%;
+    --sidebar-ring: 217 100% 64%;
 
-    /* Custom design tokens */
-    --success: 142 76% 36%;
-    --success-foreground: 220 14% 95%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 220 13% 9%;
-    --info: 200 98% 39%;
-    --info-foreground: 220 14% 95%;
+    /* Enhanced semantic colors */
+    --success: 142 86% 28%;
+    --success-foreground: 213 31% 91%;
+    --warning: 38 100% 56%;
+    --warning-foreground: 224 71% 4%;
+    --info: 199 89% 48%;
+    --info-foreground: 213 31% 91%;
 
-    /* Code syntax highlighting */
-    --syntax-keyword: 198 93% 60%;
-    --syntax-string: 113 54% 56%;
-    --syntax-number: 13 93% 66%;
-    --syntax-comment: 220 9% 55%;
+    /* Advanced code syntax highlighting */
+    --syntax-keyword: 198 100% 70%;
+    --syntax-string: 113 54% 66%;
+    --syntax-number: 25 100% 70%;
+    --syntax-comment: 217 10% 54%;
     --syntax-property: 267 84% 81%;
 
-    /* Transitions */
-    --transition-fast: 150ms ease-out;
-    --transition-normal: 250ms ease-out;
-    --transition-slow: 350ms ease-out;
+    /* Beautiful gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-card: linear-gradient(135deg, hsl(var(--card)), hsl(215 28% 8%));
+    --gradient-sidebar: linear-gradient(180deg, hsl(var(--sidebar-background)), hsl(224 71% 2%));
+
+    /* Elegant shadows */
+    --shadow-sm: 0 2px 4px -1px hsl(var(--primary) / 0.1);
+    --shadow-md: 0 4px 6px -1px hsl(var(--primary) / 0.15), 0 2px 4px -2px hsl(var(--primary) / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(var(--primary) / 0.2), 0 4px 6px -4px hsl(var(--primary) / 0.15);
+    --shadow-glow: 0 0 20px hsl(var(--primary) / 0.3);
+
+    /* Smooth transitions */
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
@@ -76,6 +88,26 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-medium;
+    background: linear-gradient(135deg, hsl(var(--background)), hsl(224 71% 2%));
+    min-height: 100vh;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.6);
   }
 }

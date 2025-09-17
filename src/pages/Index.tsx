@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Layout } from "@/components/Layout";
+import { Sidebar } from "@/components/Sidebar";
 import { JsonViewer } from "@/components/tools/JsonViewer";
 import { JsonCompare } from "@/components/tools/JsonCompare";
 import { Base64Tool } from "@/components/tools/Base64Tool";
@@ -28,55 +30,38 @@ const Index = () => {
     }
   };
 
+  const getToolTitle = () => {
+    const titles = {
+      "json-viewer": "JSON Viewer & Formatter",
+      "json-compare": "JSON Comparison Tool", 
+      "base64": "Base64 Encoder/Decoder",
+      "url-encode": "URL Encoder/Decoder",
+      "hash": "Hash Generator",
+      "text-case": "Text Case Converter"
+    };
+    return titles[activeTool as keyof typeof titles] || "Developer Tools";
+  };
+
   return (
-    <div className="flex min-h-screen bg-background">
-      <div className="w-64 bg-sidebar border-r border-sidebar-border">
-        <div className="p-4 border-b border-sidebar-border">
-          <h2 className="text-lg font-semibold text-sidebar-foreground">Developer Tools</h2>
-          <p className="text-xs text-muted-foreground">Personal utilities collection</p>
-        </div>
-        
-        <nav className="p-4 space-y-2">
-          {[
-            { id: "json-viewer", name: "JSON Viewer", desc: "Format and view JSON" },
-            { id: "json-compare", name: "JSON Compare", desc: "Compare JSON objects" },
-            { id: "base64", name: "Base64 Tool", desc: "Encode/decode Base64" },
-            { id: "url-encode", name: "URL Tool", desc: "Encode/decode URLs" },
-            { id: "hash", name: "Hash Generator", desc: "Generate hashes" },
-            { id: "text-case", name: "Text Cases", desc: "Convert text cases" }
-          ].map((tool) => (
-            <button
-              key={tool.id}
-              onClick={() => setActiveTool(tool.id)}
-              className={`w-full p-3 text-left rounded-lg transition-colors ${
-                activeTool === tool.id
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                  : "text-sidebar-foreground hover:bg-sidebar-accent"
-              }`}
-            >
-              <div className="font-medium text-sm">{tool.name}</div>
-              <div className="text-xs text-muted-foreground">{tool.desc}</div>
-            </button>
-          ))}
-        </nav>
-      </div>
+    <div className="flex min-h-screen">
+      <Sidebar activeTool={activeTool} onToolSelect={setActiveTool} />
       
       <main className="flex-1 flex flex-col">
-        <header className="border-b border-border bg-card/50 px-6 py-4">
-          <h1 className="text-2xl font-bold text-foreground">
-            {[
-              { id: "json-viewer", name: "JSON Viewer & Formatter" },
-              { id: "json-compare", name: "JSON Comparison Tool" },
-              { id: "base64", name: "Base64 Encoder/Decoder" },
-              { id: "url-encode", name: "URL Encoder/Decoder" },
-              { id: "hash", name: "Hash Generator" },
-              { id: "text-case", name: "Text Case Converter" }
-            ].find(tool => tool.id === activeTool)?.name || "Developer Tools"}
-          </h1>
-          <p className="text-sm text-muted-foreground">Client-side developer utilities</p>
+        <header className="border-b border-border bg-gradient-card px-6 py-6 backdrop-blur-sm">
+          <div className="max-w-7xl mx-auto">
+            <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-2">
+              {getToolTitle()}
+            </h1>
+            <p className="text-muted-foreground">Powerful client-side developer utilities</p>
+          </div>
         </header>
+        
         <div className="flex-1 p-6">
-          {renderTool()}
+          <div className="max-w-7xl mx-auto">
+            <div className="bg-gradient-card rounded-xl border border-border/50 shadow-elegant backdrop-blur-sm p-6">
+              {renderTool()}
+            </div>
+          </div>
         </div>
       </main>
     </div>

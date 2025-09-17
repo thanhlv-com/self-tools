@@ -77,6 +77,19 @@ export default {
           property: "hsl(var(--syntax-property))",
         },
       },
+      backgroundImage: {
+        'gradient-primary': 'var(--gradient-primary)',
+        'gradient-card': 'var(--gradient-card)',
+        'gradient-sidebar': 'var(--gradient-sidebar)',
+      },
+      boxShadow: {
+        'glow': 'var(--shadow-glow)',
+        'elegant': 'var(--shadow-lg)',
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Consolas', 'monospace'],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

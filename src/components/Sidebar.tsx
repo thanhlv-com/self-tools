@@ -68,13 +68,13 @@ export const Sidebar = ({ activeTool = "json-viewer", onToolSelect }: SidebarPro
 
   return (
     <div className={cn(
-      "bg-sidebar border-r border-sidebar-border transition-all duration-300",
+      "bg-gradient-sidebar border-r border-sidebar-border/50 transition-all duration-300 backdrop-blur-sm shadow-lg",
       collapsed ? "w-16" : "w-64"
     )}>
-      <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
+      <div className="flex items-center justify-between p-4 border-b border-sidebar-border/50">
         {!collapsed && (
           <div>
-            <h2 className="text-lg font-semibold text-sidebar-foreground">Tools</h2>
+            <h2 className="text-lg font-bold bg-gradient-primary bg-clip-text text-transparent">Tools</h2>
             <p className="text-xs text-muted-foreground">Developer utilities</p>
           </div>
         )}
@@ -82,7 +82,7 @@ export const Sidebar = ({ activeTool = "json-viewer", onToolSelect }: SidebarPro
           variant="ghost"
           size="sm"
           onClick={() => setCollapsed(!collapsed)}
-          className="text-sidebar-foreground hover:bg-sidebar-accent"
+          className="text-sidebar-foreground hover:bg-sidebar-accent hover:shadow-glow transition-all"
         >
           {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </Button>
@@ -98,17 +98,27 @@ export const Sidebar = ({ activeTool = "json-viewer", onToolSelect }: SidebarPro
               key={tool.id}
               variant={isActive ? "secondary" : "ghost"}
               className={cn(
-                "w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent transition-colors",
+                "w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent/80 hover:shadow-md transition-all duration-200 group",
                 collapsed ? "px-2" : "px-3",
-                isActive && "bg-sidebar-accent"
+                isActive && "bg-gradient-primary text-primary-foreground shadow-glow"
               )}
               onClick={() => onToolSelect?.(tool.id)}
             >
-              <Icon className={cn("h-4 w-4", !collapsed && "mr-3")} />
+              <Icon className={cn(
+                "h-4 w-4 transition-transform group-hover:scale-110", 
+                !collapsed && "mr-3",
+                isActive && "text-primary-foreground"
+              )} />
               {!collapsed && (
                 <div className="flex-1 text-left">
-                  <div className="text-sm font-medium">{tool.name}</div>
-                  <div className="text-xs text-muted-foreground">{tool.description}</div>
+                  <div className={cn(
+                    "text-sm font-medium transition-colors",
+                    isActive ? "text-primary-foreground" : "text-sidebar-foreground"
+                  )}>{tool.name}</div>
+                  <div className={cn(
+                    "text-xs transition-colors",
+                    isActive ? "text-primary-foreground/80" : "text-muted-foreground"
+                  )}>{tool.description}</div>
                 </div>
               )}
             </Button>
