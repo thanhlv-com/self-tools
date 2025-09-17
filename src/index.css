@@ -66,8 +66,10 @@
 
     /* Light gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-card: linear-gradient(135deg, hsl(var(--card)), hsl(210 40% 98%));
-    --gradient-sidebar: linear-gradient(180deg, hsl(var(--sidebar-background)), hsl(210 40% 97%));
+    --gradient-card: linear-gradient(135deg, hsl(var(--card)) 0%, rgba(255, 255, 255, 0.8) 50%, hsl(210 40% 98%) 100%);
+    --gradient-sidebar: linear-gradient(180deg, hsl(var(--sidebar-background)), rgba(255, 255, 255, 0.9) 50%, hsl(210 40% 97%));
+    --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.1));
+    --gradient-mesh: radial-gradient(ellipse at top left, hsl(217 100% 95%) 0%, transparent 35%), radial-gradient(ellipse at bottom right, hsl(199 89% 95%) 0%, transparent 35%);
 
     /* Light shadows */
     --shadow-sm: 0 2px 4px -1px hsl(215 28% 17% / 0.1);
@@ -140,8 +142,10 @@
 
     /* Dark gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-card: linear-gradient(135deg, hsl(var(--card)), hsl(215 28% 8%));
-    --gradient-sidebar: linear-gradient(180deg, hsl(var(--sidebar-background)), hsl(224 71% 2%));
+    --gradient-card: linear-gradient(135deg, hsl(var(--card)) 0%, rgba(37, 44, 59, 0.8) 50%, hsl(215 28% 8%) 100%);
+    --gradient-sidebar: linear-gradient(180deg, hsl(var(--sidebar-background)), rgba(20, 25, 40, 0.9) 50%, hsl(224 71% 2%));
+    --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    --gradient-mesh: radial-gradient(ellipse at top left, hsl(217 100% 15%) 0%, transparent 35%), radial-gradient(ellipse at bottom right, hsl(199 89% 15%) 0%, transparent 35%);
 
     /* Dark shadows */
     --shadow-sm: 0 2px 4px -1px hsl(var(--primary) / 0.1);
@@ -158,7 +162,7 @@
 
   body {
     @apply bg-background text-foreground font-medium transition-colors duration-300;
-    background: linear-gradient(135deg, hsl(var(--background)), hsl(var(--background)) 50%, hsl(var(--muted)) 100%);
+    background: var(--gradient-mesh), linear-gradient(135deg, hsl(var(--background)), hsl(var(--background)) 50%, hsl(var(--muted)) 100%);
     min-height: 100vh;
   }
 

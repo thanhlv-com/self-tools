@@ -45,25 +45,33 @@ const Index = () => {
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar activeTool={activeTool} onToolSelect={setActiveTool} />
+      <div className="animate-slide-in-left">
+        <Sidebar activeTool={activeTool} onToolSelect={setActiveTool} />
+      </div>
       
-      <main className="flex-1 flex flex-col">
-        <header className="border-b border-border bg-gradient-card px-6 py-6 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-2">
+      <main className="flex-1 flex flex-col animate-slide-in-right">
+        <header className="border-b border-border/30 bg-gradient-card px-6 py-8 backdrop-blur-xl relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-glass opacity-50"></div>
+          <div className="max-w-7xl mx-auto flex items-center justify-between relative z-10">
+            <div className="space-y-3">
+              <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-2 tracking-tight">
                 {getToolTitle()}
               </h1>
-              <p className="text-muted-foreground">Powerful client-side developer utilities</p>
+              <p className="text-muted-foreground text-lg font-medium">Powerful client-side developer utilities ✨</p>
             </div>
-            <ThemeToggle />
+            <div className="bg-gradient-glass backdrop-blur-sm border border-border/20 rounded-xl p-2 shadow-glass dark:shadow-glass-dark">
+              <ThemeToggle />
+            </div>
           </div>
         </header>
         
-        <div className="flex-1 p-6">
+        <div className="flex-1 p-8">
           <div className="max-w-7xl mx-auto">
-            <div className="bg-gradient-card rounded-xl border border-border/50 shadow-elegant backdrop-blur-sm p-6">
-              {renderTool()}
+            <div className="bg-gradient-card rounded-2xl border border-border/30 shadow-float dark:shadow-float-dark backdrop-blur-xl p-8 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-glass opacity-20"></div>
+              <div className="relative z-10">
+                {renderTool()}
+              </div>
             </div>
           </div>
         </div>

@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Copy, Download, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 export const JsonViewer = () => {
   const [input, setInput] = useState("");
@@ -75,18 +76,19 @@ export const JsonViewer = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-foreground mb-2">JSON Viewer & Formatter</h2>
-        <p className="text-muted-foreground">Format, validate, and beautify JSON data</p>
+    <div className="space-y-8">
+      <div className="text-center space-y-3">
+        <h2 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent tracking-tight">JSON Viewer & Formatter</h2>
+        <p className="text-muted-foreground text-lg font-medium">Format, validate, and beautify JSON data with style ✨</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <Card className="bg-gradient-card border border-border/30 shadow-glass dark:shadow-glass-dark backdrop-blur-sm relative overflow-hidden animate-fade-in">
+          <div className="absolute inset-0 bg-gradient-glass opacity-20"></div>
+          <CardHeader className="relative z-10">
+            <CardTitle className="flex items-center justify-between text-lg font-bold">
               Input JSON
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <input
                   type="file"
                   accept=".json"
@@ -98,43 +100,63 @@ export const JsonViewer = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => document.getElementById("file-upload")?.click()}
+                  className="backdrop-blur-sm border-border/30 hover:bg-accent/60 transition-all duration-300 hover:scale-105"
                 >
                   <Upload className="h-4 w-4 mr-2" />
                   Upload
                 </Button>
                 {isValid !== null && (
-                  <Badge variant={isValid ? "secondary" : "destructive"}>
-                    {isValid ? "Valid" : "Invalid"}
+                  <Badge 
+                    variant={isValid ? "secondary" : "destructive"}
+                    className={cn(
+                      "backdrop-blur-sm font-semibold transition-all duration-300",
+                      isValid ? "bg-success/20 text-success border-success/30" : "bg-destructive/20 text-destructive border-destructive/30"
+                    )}
+                  >
+                    {isValid ? "✓ Valid" : "✗ Invalid"}
                   </Badge>
                 )}
               </div>
             </CardTitle>
-            <CardDescription>Paste or upload your JSON data</CardDescription>
+            <CardDescription className="text-base font-medium">Paste or upload your JSON data</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6 relative z-10">
             <Textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder='{"name": "example", "value": 123}'
-              className="min-h-[300px] font-mono"
+              className="min-h-[350px] font-mono bg-background/50 backdrop-blur-sm border-border/30 rounded-xl resize-none transition-all duration-300 focus:bg-background/70 focus:shadow-glow"
             />
-            <div className="flex gap-2">
-              <Button onClick={formatJson}>Format JSON</Button>
-              <Button variant="outline" onClick={minifyJson}>Minify JSON</Button>
+            <div className="flex gap-3">
+              <Button 
+                onClick={formatJson}
+                className="bg-gradient-primary hover:shadow-glow transition-all duration-300 hover:scale-105 font-semibold"
+              >
+                Format JSON
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={minifyJson}
+                className="backdrop-blur-sm border-border/30 hover:bg-accent/60 transition-all duration-300 hover:scale-105 font-semibold"
+              >
+                Minify JSON
+              </Button>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
+        <Card className="bg-gradient-card border border-border/30 shadow-glass dark:shadow-glass-dark backdrop-blur-sm relative overflow-hidden animate-fade-in" style={{animationDelay: "0.2s"}}>
+          <div className="absolute inset-0 bg-gradient-glass opacity-20"></div>
+          <CardHeader className="relative z-10">
+            <CardTitle className="flex items-center justify-between text-lg font-bold">
               Formatted Output
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={copyToClipboard}
                   disabled={!formatted}
+                  className="backdrop-blur-sm border-border/30 hover:bg-accent/60 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
                 >
                   <Copy className="h-4 w-4 mr-2" />
                   Copy
@@ -144,19 +166,20 @@ export const JsonViewer = () => {
                   size="sm"
                   onClick={downloadJson}
                   disabled={!formatted}
+                  className="backdrop-blur-sm border-border/30 hover:bg-accent/60 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
                 >
                   <Download className="h-4 w-4 mr-2" />
                   Download
                 </Button>
               </div>
             </CardTitle>
-            <CardDescription>Formatted and validated JSON</CardDescription>
+            <CardDescription className="text-base font-medium">Formatted and validated JSON</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="relative z-10">
             <Textarea
               value={formatted}
               readOnly
-              className="min-h-[300px] font-mono bg-muted"
+              className="min-h-[350px] font-mono bg-muted/50 backdrop-blur-sm border-border/30 rounded-xl resize-none transition-all duration-300"
             />
           </CardContent>
         </Card>
