@@ -164,7 +164,9 @@ interface SidebarProps {
 export const Sidebar = ({ activeTool, onToolSelect }: SidebarProps) => {
   const [collapsed, setCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
+    new Set(toolCategories.map(cat => cat.id)) // Show all categories expanded by default
+  );
   const location = useLocation();
 
   // Filter tools based on search query
@@ -188,7 +190,8 @@ export const Sidebar = ({ activeTool, onToolSelect }: SidebarProps) => {
     if (searchQuery.trim()) {
       setExpandedCategories(new Set(filteredCategories.map(cat => cat.id)));
     } else {
-      setExpandedCategories(new Set());
+      // When search is cleared, restore default expanded state (all categories)
+      setExpandedCategories(new Set(toolCategories.map(cat => cat.id)));
     }
   }, [searchQuery, filteredCategories]);
 
