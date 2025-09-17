@@ -13,6 +13,7 @@ import UrlEncodePage from "./pages/UrlEncodePage";
 import HashPage from "./pages/HashPage";
 import TextCasePage from "./pages/TextCasePage";
 import VideoCompressorPage from "./pages/VideoCompressorPage";
+import ImageCompressorPage from "./pages/ImageCompressorPage";
 import JwtToolPage from "./pages/JwtToolPage";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/hash" element={<HashPage />} />
             <Route path="/text-case" element={<TextCasePage />} />
             <Route path="/video-compressor" element={<VideoCompressorPage />} />
+            <Route path="/image-compressor" element={<ImageCompressorPage />} />
             <Route path="/jwt-tool" element={<JwtToolPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

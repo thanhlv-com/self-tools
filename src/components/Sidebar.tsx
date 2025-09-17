@@ -14,6 +14,7 @@ import {
   Sparkles,
   Zap,
   FileVideo,
+  Image,
   Shield
 } from "lucide-react";
 
@@ -74,6 +75,13 @@ const tools: Tool[] = [
     icon: FileVideo,
     description: "Reduce video file sizes",
     path: "/video-compressor"
+  },
+  {
+    id: "image-compressor",
+    name: "Image Compressor",
+    icon: Image,
+    description: "Compress images with quality control",
+    path: "/image-compressor"
   },
   {
     id: "jwt-tool",
