@@ -6,7 +6,83 @@
 
 @layer base {
   :root {
-    /* Beautiful dark theme with modern gradients */
+    /* Light theme colors */
+    --background: 0 0% 98%;
+    --foreground: 224 71% 4%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 224 71% 4%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71% 4%;
+
+    /* Vibrant primary with electric blue */
+    --primary: 217 100% 50%;
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 217 100% 60%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 224 71% 4%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 210 40% 96%;
+    --accent-foreground: 224 71% 4%;
+
+    --destructive: 0 90% 51%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 217 100% 50%;
+
+    --radius: 0.75rem;
+
+    /* Light sidebar */
+    --sidebar-background: 0 0% 99%;
+    --sidebar-foreground: 224 71% 4%;
+    --sidebar-primary: 217 100% 50%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 210 40% 94%;
+    --sidebar-accent-foreground: 224 71% 4%;
+    --sidebar-border: 214 32% 88%;
+    --sidebar-ring: 217 100% 50%;
+
+    /* Light semantic colors */
+    --success: 142 86% 28%;
+    --success-foreground: 0 0% 98%;
+    --warning: 38 100% 50%;
+    --warning-foreground: 0 0% 98%;
+    --info: 199 89% 48%;
+    --info-foreground: 0 0% 98%;
+
+    /* Light code syntax */
+    --syntax-keyword: 221 83% 53%;
+    --syntax-string: 119 34% 47%;
+    --syntax-number: 25 100% 50%;
+    --syntax-comment: 215 16% 47%;
+    --syntax-property: 262 83% 58%;
+
+    /* Light gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-card: linear-gradient(135deg, hsl(var(--card)), hsl(210 40% 98%));
+    --gradient-sidebar: linear-gradient(180deg, hsl(var(--sidebar-background)), hsl(210 40% 97%));
+
+    /* Light shadows */
+    --shadow-sm: 0 2px 4px -1px hsl(215 28% 17% / 0.1);
+    --shadow-md: 0 4px 6px -1px hsl(215 28% 17% / 0.15), 0 2px 4px -2px hsl(215 28% 17% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(215 28% 17% / 0.2), 0 4px 6px -4px hsl(215 28% 17% / 0.15);
+    --shadow-glow: 0 0 20px hsl(var(--primary) / 0.3);
+
+    /* Smooth transitions */
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark {
+    /* Dark theme colors */
     --background: 224 71% 4%;
     --foreground: 213 31% 91%;
 
@@ -37,9 +113,7 @@
     --input: 215 28% 12%;
     --ring: 217 100% 64%;
 
-    --radius: 0.75rem;
-
-    /* Enhanced sidebar with depth */
+    /* Dark sidebar */
     --sidebar-background: 224 71% 3%;
     --sidebar-foreground: 213 31% 91%;
     --sidebar-primary: 217 100% 64%;
@@ -49,7 +123,7 @@
     --sidebar-border: 215 28% 14%;
     --sidebar-ring: 217 100% 64%;
 
-    /* Enhanced semantic colors */
+    /* Dark semantic colors */
     --success: 142 86% 28%;
     --success-foreground: 213 31% 91%;
     --warning: 38 100% 56%;
@@ -57,28 +131,23 @@
     --info: 199 89% 48%;
     --info-foreground: 213 31% 91%;
 
-    /* Advanced code syntax highlighting */
+    /* Dark code syntax */
     --syntax-keyword: 198 100% 70%;
     --syntax-string: 113 54% 66%;
     --syntax-number: 25 100% 70%;
     --syntax-comment: 217 10% 54%;
     --syntax-property: 267 84% 81%;
 
-    /* Beautiful gradients */
+    /* Dark gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
     --gradient-card: linear-gradient(135deg, hsl(var(--card)), hsl(215 28% 8%));
     --gradient-sidebar: linear-gradient(180deg, hsl(var(--sidebar-background)), hsl(224 71% 2%));
 
-    /* Elegant shadows */
+    /* Dark shadows */
     --shadow-sm: 0 2px 4px -1px hsl(var(--primary) / 0.1);
     --shadow-md: 0 4px 6px -1px hsl(var(--primary) / 0.15), 0 2px 4px -2px hsl(var(--primary) / 0.1);
     --shadow-lg: 0 10px 15px -3px hsl(var(--primary) / 0.2), 0 4px 6px -4px hsl(var(--primary) / 0.15);
     --shadow-glow: 0 0 20px hsl(var(--primary) / 0.3);
-
-    /* Smooth transitions */
-    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
@@ -88,8 +157,8 @@
   }
 
   body {
-    @apply bg-background text-foreground font-medium;
-    background: linear-gradient(135deg, hsl(var(--background)), hsl(224 71% 2%));
+    @apply bg-background text-foreground font-medium transition-colors duration-300;
+    background: linear-gradient(135deg, hsl(var(--background)), hsl(var(--background)) 50%, hsl(var(--muted)) 100%);
     min-height: 100vh;
   }
 
@@ -105,6 +174,7 @@
   ::-webkit-scrollbar-thumb {
     background: hsl(var(--border));
     border-radius: 3px;
+    transition: background var(--transition-fast);
   }
 
   ::-webkit-scrollbar-thumb:hover {

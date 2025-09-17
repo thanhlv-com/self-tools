@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Sidebar } from "@/components/Sidebar";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { JsonViewer } from "@/components/tools/JsonViewer";
 import { JsonCompare } from "@/components/tools/JsonCompare";
 import { Base64Tool } from "@/components/tools/Base64Tool";
@@ -48,11 +49,14 @@ const Index = () => {
       
       <main className="flex-1 flex flex-col">
         <header className="border-b border-border bg-gradient-card px-6 py-6 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto">
-            <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-2">
-              {getToolTitle()}
-            </h1>
-            <p className="text-muted-foreground">Powerful client-side developer utilities</p>
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-2">
+                {getToolTitle()}
+              </h1>
+              <p className="text-muted-foreground">Powerful client-side developer utilities</p>
+            </div>
+            <ThemeToggle />
           </div>
         </header>
         
