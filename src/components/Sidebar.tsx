@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
 import { 
@@ -16,7 +17,14 @@ import {
   FileVideo,
   Image,
   Shield,
-  Scissors
+  Scissors,
+  Search,
+  ChevronDown,
+  ChevronUp,
+  Database,
+  FileCode,
+  Palette,
+  Play
 } from "lucide-react";
 
 interface Tool {
@@ -27,76 +35,124 @@ interface Tool {
   path: string;
 }
 
-const tools: Tool[] = [
+interface ToolCategory {
+  id: string;
+  name: string;
+  icon: React.ComponentType<{ className?: string }>;
+  color: string;
+  tools: Tool[];
+}
+
+const toolCategories: ToolCategory[] = [
   {
-    id: "json-viewer",
-    name: "JSON Viewer",
-    icon: Code2,
-    description: "Format and view JSON data",
-    path: "/json-viewer"
-  },
-  {
-    id: "json-compare",
-    name: "JSON Compare",
-    icon: FileText,
-    description: "Compare multiple JSON objects",
-    path: "/json-compare"
-  },
-  {
-    id: "base64",
-    name: "Base64 Encode/Decode",
+    id: "encoding",
+    name: "Encoding & Decoding",
     icon: Key,
-    description: "Base64 encoding and decoding",
-    path: "/base64"
+    color: "from-blue-500 to-cyan-500",
+    tools: [
+      {
+        id: "base64",
+        name: "Base64 Encode/Decode",
+        icon: Key,
+        description: "Base64 encoding and decoding",
+        path: "/base64"
+      },
+      {
+        id: "url-encode",
+        name: "URL Encode/Decode",
+        icon: Shuffle,
+        description: "URL encoding and decoding",
+        path: "/url-encode"
+      }
+    ]
   },
   {
-    id: "url-encode",
-    name: "URL Encode/Decode",
-    icon: Shuffle,
-    description: "URL encoding and decoding",
-    path: "/url-encode"
+    id: "json",
+    name: "JSON Tools",
+    icon: Database,
+    color: "from-green-500 to-emerald-500",
+    tools: [
+      {
+        id: "json-viewer",
+        name: "JSON Viewer",
+        icon: Code2,
+        description: "Format and view JSON data",
+        path: "/json-viewer"
+      },
+      {
+        id: "json-compare",
+        name: "JSON Compare",
+        icon: FileText,
+        description: "Compare multiple JSON objects",
+        path: "/json-compare"
+      }
+    ]
   },
   {
-    id: "hash",
-    name: "Hash Generator",
-    icon: Hash,
-    description: "Generate MD5, SHA-256 hashes",
-    path: "/hash"
+    id: "text",
+    name: "Text Tools",
+    icon: FileCode,
+    color: "from-purple-500 to-violet-500",
+    tools: [
+      {
+        id: "text-case",
+        name: "Text Case Converter",
+        icon: Type,
+        description: "Convert text cases",
+        path: "/text-case"
+      },
+      {
+        id: "hash",
+        name: "Hash Generator",
+        icon: Hash,
+        description: "Generate MD5, SHA-256 hashes",
+        path: "/hash"
+      }
+    ]
   },
   {
-    id: "text-case",
-    name: "Text Case Converter",
-    icon: Type,
-    description: "Convert text cases",
-    path: "/text-case"
+    id: "media",
+    name: "Media Tools",
+    icon: Play,
+    color: "from-orange-500 to-red-500",
+    tools: [
+      {
+        id: "image-compressor",
+        name: "Image Compressor",
+        icon: Image,
+        description: "Compress images with quality control",
+        path: "/image-compressor"
+      },
+      {
+        id: "image-size-converter",
+        name: "Image Size Converter",
+        icon: Scissors,
+        description: "Crop & resize to passport, visa formats",
+        path: "/image-size-converter"
+      },
+      {
+        id: "video-compressor",
+        name: "Video Compressor",
+        icon: FileVideo,
+        description: "Reduce video file sizes",
+        path: "/video-compressor"
+      }
+    ]
   },
   {
-    id: "video-compressor",
-    name: "Video Compressor",
-    icon: FileVideo,
-    description: "Reduce video file sizes",
-    path: "/video-compressor"
-  },
-  {
-    id: "image-compressor",
-    name: "Image Compressor",
-    icon: Image,
-    description: "Compress images with quality control",
-    path: "/image-compressor"
-  },
-  {
-    id: "jwt-tool",
-    name: "JWT Toolkit",
+    id: "security",
+    name: "Security Tools",
     icon: Shield,
-    description: "Complete JWT debugging & creation 📄✨",
-    path: "/jwt-tool"
-  },
-  {
-    id: "image-size-converter",
-    name: "Image Size Converter",
-    icon: Scissors,
-    description: "Crop & resize to passport, visa formats",
-    path: "/image-size-converter"
+    color: "from-pink-500 to-rose-500",
+    tools: [
+      {
+        id: "jwt-tool",
+        name: "JWT Toolkit",
+        icon: Shield,
+        description: "Complete JWT debugging & creation 📄✨",
+        path: "/jwt-tool"
+      }
+    ]
   }
 ];
 
@@ -107,7 +163,46 @@ interface SidebarProps {
 
 export const Sidebar = ({ activeTool, onToolSelect }: SidebarProps) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const location = useLocation();
+
+  // Filter tools based on search query
+  const filteredCategories = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return toolCategories;
+    }
+
+    const query = searchQuery.toLowerCase();
+    return toolCategories.map(category => ({
+      ...category,
+      tools: category.tools.filter(tool => 
+        tool.name.toLowerCase().includes(query) ||
+        tool.description.toLowerCase().includes(query)
+      )
+    })).filter(category => category.tools.length > 0);
+  }, [searchQuery]);
+
+  // Auto-expand categories when searching
+  useMemo(() => {
+    if (searchQuery.trim()) {
+      setExpandedCategories(new Set(filteredCategories.map(cat => cat.id)));
+    } else {
+      setExpandedCategories(new Set());
+    }
+  }, [searchQuery, filteredCategories]);
+
+  const toggleCategory = (categoryId: string) => {
+    setExpandedCategories(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(categoryId)) {
+        newSet.delete(categoryId);
+      } else {
+        newSet.add(categoryId);
+      }
+      return newSet;
+    });
+  };
 
   return (
     <div className={cn(
@@ -135,7 +230,7 @@ export const Sidebar = ({ activeTool, onToolSelect }: SidebarProps) => {
       
       {/* Header section */}
       <div className="relative z-10 p-6 border-b border-white/10">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-4">
           {!collapsed && (
             <div className="space-y-2 min-w-0 flex-1">
               <div className="flex items-center gap-2">
@@ -168,88 +263,154 @@ export const Sidebar = ({ activeTool, onToolSelect }: SidebarProps) => {
             )}
           </Button>
         </div>
+
+        {/* Search bar */}
+        {!collapsed && (
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Input
+              placeholder="Search tools..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 bg-white/5 border-white/20 text-slate-200 placeholder:text-slate-400 focus:border-pink-400/50 focus:ring-pink-400/20"
+            />
+          </div>
+        )}
       </div>
       
       {/* Navigation */}
-      <nav className="relative z-10 p-4 space-y-2">
-        {tools.map((tool, index) => {
-          const Icon = tool.icon;
-          const isActive = activeTool === tool.id || location.pathname === tool.path;
+      <nav className="relative z-10 p-4 space-y-3 overflow-y-auto max-h-[calc(100vh-300px)]">
+        {filteredCategories.map((category, categoryIndex) => {
+          const CategoryIcon = category.icon;
+          const isExpanded = expandedCategories.has(category.id);
           
           return (
-            <div
-              key={tool.id}
-              className="relative group"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <Button
-                variant="ghost"
-                className={cn(
-                  "w-full justify-start relative overflow-hidden transition-all duration-500 group rounded-2xl min-h-[3.5rem] border backdrop-blur-sm",
-                  collapsed ? "p-3" : "p-4",
-                  isActive
-                    ? "bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-cyan-500/20 border-pink-400/30 shadow-lg shadow-pink-500/20 scale-[1.02]"
-                    : "border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/10"
-                )}
-                asChild
-              >
-                <Link to={tool.path}>
-                {/* Active indicator */}
-                {isActive && (
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-pink-400 to-cyan-400 rounded-r-full"></div>
-                )}
-                
-                {/* Hover glow effect */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-pink-500/10 via-purple-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                
-                {/* Icon with enhanced effects */}
-                <div className="relative flex-shrink-0">
-                  <Icon className={cn(
-                    "transition-all duration-500 group-hover:scale-110 relative z-10",
-                    collapsed ? "h-6 w-6" : "h-5 w-5",
-                    !collapsed && "mr-4",
-                    isActive 
-                      ? "text-pink-300 drop-shadow-lg" 
-                      : "text-slate-300 group-hover:text-white group-hover:drop-shadow-lg"
-                  )} />
-                  {/* Icon glow */}
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-50 transition-opacity duration-300">
-                    <Icon className={cn(
-                      "animate-pulse text-pink-400 blur-sm",
-                      collapsed ? "h-6 w-6" : "h-5 w-5"
-                    )} />
+            <div key={category.id} className="space-y-2">
+              {/* Category Header */}
+              {!collapsed && (
+                <Button
+                  variant="ghost"
+                  onClick={() => toggleCategory(category.id)}
+                  className="w-full justify-between p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-300 group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={cn(
+                      "p-1.5 rounded-lg bg-gradient-to-r",
+                      category.color,
+                      "bg-opacity-20"
+                    )}>
+                      <CategoryIcon className="h-4 w-4 text-white" />
+                    </div>
+                    <span className="text-sm font-semibold text-slate-200 group-hover:text-white">
+                      {category.name}
+                    </span>
+                    <span className="text-xs text-slate-400 bg-white/10 px-2 py-0.5 rounded-full">
+                      {category.tools.length}
+                    </span>
                   </div>
+                  {isExpanded ? (
+                    <ChevronUp className="h-4 w-4 text-slate-400 group-hover:text-white transition-colors" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 text-slate-400 group-hover:text-white transition-colors" />
+                  )}
+                </Button>
+              )}
+
+              {/* Category Tools */}
+              {(isExpanded || collapsed) && (
+                <div className="space-y-1 ml-2">
+                  {category.tools.map((tool, toolIndex) => {
+                    const Icon = tool.icon;
+                    const isActive = activeTool === tool.id || location.pathname === tool.path;
+                    
+                    return (
+                      <div
+                        key={tool.id}
+                        className="relative group"
+                        style={{ animationDelay: `${(categoryIndex * 100) + (toolIndex * 50)}ms` }}
+                      >
+                        <Button
+                          variant="ghost"
+                          className={cn(
+                            "w-full justify-start relative overflow-hidden transition-all duration-500 group rounded-xl min-h-[3rem] border backdrop-blur-sm",
+                            collapsed ? "p-3" : "p-3",
+                            isActive
+                              ? "bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-cyan-500/20 border-pink-400/30 shadow-lg shadow-pink-500/20 scale-[1.02]"
+                              : "border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/10"
+                          )}
+                          asChild
+                        >
+                          <Link to={tool.path}>
+                            {/* Active indicator */}
+                            {isActive && (
+                              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-pink-400 to-cyan-400 rounded-r-full"></div>
+                            )}
+                            
+                            {/* Hover glow effect */}
+                            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-pink-500/10 via-purple-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            
+                            {/* Icon with enhanced effects */}
+                            <div className="relative flex-shrink-0">
+                              <Icon className={cn(
+                                "transition-all duration-500 group-hover:scale-110 relative z-10",
+                                collapsed ? "h-5 w-5" : "h-4 w-4",
+                                !collapsed && "mr-3",
+                                isActive 
+                                  ? "text-pink-300 drop-shadow-lg" 
+                                  : "text-slate-300 group-hover:text-white group-hover:drop-shadow-lg"
+                              )} />
+                              {/* Icon glow */}
+                              <div className="absolute inset-0 opacity-0 group-hover:opacity-50 transition-opacity duration-300">
+                                <Icon className={cn(
+                                  "animate-pulse text-pink-400 blur-sm",
+                                  collapsed ? "h-5 w-5" : "h-4 w-4"
+                                )} />
+                              </div>
+                            </div>
+                            
+                            {/* Text content */}
+                            {!collapsed && (
+                              <div className="flex-1 text-left space-y-0.5 min-w-0 relative z-10">
+                                <div className={cn(
+                                  "text-sm font-medium transition-colors tracking-tight truncate",
+                                  isActive ? "text-white" : "text-slate-200 group-hover:text-white"
+                                )}>
+                                  {tool.name}
+                                </div>
+                                <div className={cn(
+                                  "text-xs transition-colors font-normal truncate leading-tight",
+                                  isActive ? "text-pink-200" : "text-slate-400 group-hover:text-slate-300"
+                                )}>
+                                  {tool.description}
+                                </div>
+                              </div>
+                            )}
+                            
+                            {/* Active pulse effect */}
+                            {isActive && !collapsed && (
+                              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                <Zap className="h-3 w-3 text-cyan-400 animate-pulse" />
+                              </div>
+                            )}
+                          </Link>
+                        </Button>
+                      </div>
+                    );
+                  })}
                 </div>
-                
-                {/* Text content */}
-                {!collapsed && (
-                  <div className="flex-1 text-left space-y-1 min-w-0 relative z-10">
-                    <div className={cn(
-                      "text-sm font-semibold transition-colors tracking-tight truncate",
-                      isActive ? "text-white" : "text-slate-200 group-hover:text-white"
-                    )}>
-                      {tool.name}
-                    </div>
-                    <div className={cn(
-                      "text-xs transition-colors font-medium truncate leading-tight",
-                      isActive ? "text-pink-200" : "text-slate-400 group-hover:text-slate-300"
-                    )}>
-                      {tool.description}
-                    </div>
-                  </div>
-                )}
-                
-                {/* Active pulse effect */}
-                {isActive && !collapsed && (
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                    <Zap className="h-4 w-4 text-cyan-400 animate-pulse" />
-                  </div>
-                )}
-                </Link>
-              </Button>
+              )}
             </div>
           );
         })}
+
+        {/* No results message */}
+        {searchQuery.trim() && filteredCategories.length === 0 && !collapsed && (
+          <div className="text-center py-8">
+            <Search className="h-8 w-8 text-slate-400 mx-auto mb-2" />
+            <p className="text-sm text-slate-400">No tools found</p>
+            <p className="text-xs text-slate-500 mt-1">Try a different search term</p>
+          </div>
+        )}
       </nav>
       
       {/* Bottom magical decoration */}
