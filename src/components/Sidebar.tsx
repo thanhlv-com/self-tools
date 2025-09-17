@@ -12,7 +12,8 @@ import {
   ChevronRight,
   Sparkles,
   Zap,
-  FileVideo
+  FileVideo,
+  Shield
 } from "lucide-react";
 
 interface Tool {
@@ -64,6 +65,12 @@ const tools: Tool[] = [
     name: "Video Compressor",
     icon: FileVideo,
     description: "Reduce video file sizes"
+  },
+  {
+    id: "jwt-tool",
+    name: "JWT Toolkit",
+    icon: Shield,
+    description: "Complete JWT debugging & creation 📄✨"
   }
 ];
 

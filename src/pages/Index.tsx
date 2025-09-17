@@ -9,6 +9,7 @@ import { UrlEncodeTool } from "@/components/tools/UrlEncodeTool";
 import { HashGenerator } from "@/components/tools/HashGenerator";
 import { TextCaseConverter } from "@/components/tools/TextCaseConverter";
 import { VideoCompressor } from "@/components/tools/VideoCompressor";
+import { JwtTool } from "@/components/tools/JwtTool";
 
 const Index = () => {
   const [activeTool, setActiveTool] = useState("json-viewer");
@@ -29,6 +30,8 @@ const Index = () => {
         return <TextCaseConverter />;
       case "video-compressor":
         return <VideoCompressor />;
+      case "jwt-tool":
+        return <JwtTool />;
       default:
         return <JsonViewer />;
     }
@@ -42,7 +45,8 @@ const Index = () => {
       "url-encode": "URL Encoder/Decoder", 
       "hash": "Hash Generator",
       "text-case": "Text Case Converter",
-      "video-compressor": "Video Compressor"
+      "video-compressor": "Video Compressor",
+      "jwt-tool": "JWT Toolkit 📄✨"
     };
     return titles[activeTool as keyof typeof titles] || "Developer Tools";
   };
