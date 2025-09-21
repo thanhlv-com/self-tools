@@ -18,6 +18,7 @@ import {
   Image,
   Shield,
   Scissors,
+  Images,
   Search,
   ChevronDown,
   ChevronUp,
@@ -151,6 +152,13 @@ const toolCategories: ToolCategory[] = [
         icon: FileVideo,
         description: "Reduce video file sizes",
         path: "/video-compressor"
+      },
+      {
+        id: "photo-compare",
+        name: "Photo Compare",
+        icon: Images,
+        description: "Compare images and detect differences",
+        path: "/photo-compare"
       }
     ]
   },
