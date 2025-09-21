@@ -12,12 +12,27 @@ export interface ComparisonResult {
   differences: TextDifference[];
   similarity: number;
   documents: WordDocument[];
+  parallelDiff: ParallelDiffLine[];
 }
 
 export interface TextDifference {
   type: 'added' | 'removed' | 'unchanged';
   text: string;
   lineNumber?: number;
+}
+
+export interface ParallelDiffLine {
+  leftLine: {
+    content: string;
+    lineNumber: number;
+    type: 'normal' | 'removed' | 'empty';
+  };
+  rightLine: {
+    content: string;
+    lineNumber: number;
+    type: 'normal' | 'added' | 'empty';
+  };
+  isDifferent: boolean;
 }
 
 /**
@@ -59,11 +74,13 @@ export function compareWordDocuments(documents: WordDocument[]): ComparisonResul
   
   const differences = calculateTextDifferences(docA.content, docB.content);
   const similarity = calculateSimilarity(docA.content, docB.content);
+  const parallelDiff = createParallelDiff(docA.content, docB.content);
   
   return {
     differences,
     similarity,
-    documents
+    documents,
+    parallelDiff
   };
 }
 
@@ -181,4 +198,82 @@ export function isValidWordFile(file: File): boolean {
   const hasValidMimeType = validMimeTypes.includes(file.type);
   
   return hasValidExtension || hasValidMimeType;
+}
+
+/**
+ * Create parallel diff data for side-by-side comparison
+ */
+function createParallelDiff(textA: string, textB: string): ParallelDiffLine[] {
+  const linesA = textA.split('\n');
+  const linesB = textB.split('\n');
+  
+  const result: ParallelDiffLine[] = [];
+  const maxLines = Math.max(linesA.length, linesB.length);
+  
+  let lineNumberA = 1;
+  let lineNumberB = 1;
+  
+  for (let i = 0; i < maxLines; i++) {
+    const lineA = linesA[i];
+    const lineB = linesB[i];
+    
+    const hasLineA = lineA !== undefined;
+    const hasLineB = lineB !== undefined;
+    
+    if (!hasLineA && !hasLineB) continue;
+    
+    let leftLine, rightLine, isDifferent;
+    
+    if (hasLineA && hasLineB) {
+      // Both lines exist
+      const areEqual = lineA.trim() === lineB.trim();
+      isDifferent = !areEqual;
+      
+      leftLine = {
+        content: lineA,
+        lineNumber: lineNumberA++,
+        type: areEqual ? 'normal' as const : 'removed' as const
+      };
+      
+      rightLine = {
+        content: lineB,
+        lineNumber: lineNumberB++,
+        type: areEqual ? 'normal' as const : 'added' as const
+      };
+    } else if (hasLineA && !hasLineB) {
+      // Only left line exists (removed)
+      isDifferent = true;
+      leftLine = {
+        content: lineA,
+        lineNumber: lineNumberA++,
+        type: 'removed' as const
+      };
+      rightLine = {
+        content: '',
+        lineNumber: lineNumberB,
+        type: 'empty' as const
+      };
+    } else {
+      // Only right line exists (added)
+      isDifferent = true;
+      leftLine = {
+        content: '',
+        lineNumber: lineNumberA,
+        type: 'empty' as const
+      };
+      rightLine = {
+        content: lineB,
+        lineNumber: lineNumberB++,
+        type: 'added' as const
+      };
+    }
+    
+    result.push({
+      leftLine,
+      rightLine,
+      isDifferent
+    });
+  }
+  
+  return result;
 }
