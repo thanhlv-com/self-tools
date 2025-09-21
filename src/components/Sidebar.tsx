@@ -115,6 +115,13 @@ const toolCategories: ToolCategory[] = [
         icon: FileDiff,
         description: "Compare multiple Word documents",
         path: "/word-compare"
+      },
+      {
+        id: "text-compare",
+        name: "Text Compare",
+        icon: FileDiff,
+        description: "Compare text documents line by line",
+        path: "/text-compare"
       }
     ]
   },

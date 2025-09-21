@@ -17,6 +17,7 @@ import ImageCompressorPage from "./pages/ImageCompressorPage";
 import JwtToolPage from "./pages/JwtToolPage";
 import ImageSizeConverterPage from "./pages/ImageSizeConverterPage";
 import WordComparePage from "./pages/WordComparePage";
+import TextComparePage from "./pages/TextComparePage";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ const App = () => (
             <Route path="/jwt-tool" element={<JwtToolPage />} />
             <Route path="/image-size-converter" element={<ImageSizeConverterPage />} />
             <Route path="/word-compare" element={<WordComparePage />} />
+            <Route path="/text-compare" element={<TextComparePage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
