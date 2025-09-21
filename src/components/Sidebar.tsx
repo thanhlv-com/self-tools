@@ -24,7 +24,8 @@ import {
   Database,
   FileCode,
   Palette,
-  Play
+  Play,
+  FileDiff
 } from "lucide-react";
 
 interface Tool {
@@ -107,6 +108,13 @@ const toolCategories: ToolCategory[] = [
         icon: Hash,
         description: "Generate MD5, SHA-256 hashes",
         path: "/hash"
+      },
+      {
+        id: "word-compare",
+        name: "Word Compare",
+        icon: FileDiff,
+        description: "Compare multiple Word documents",
+        path: "/word-compare"
       }
     ]
   },

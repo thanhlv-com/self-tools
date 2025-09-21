@@ -57,6 +57,7 @@
     "js-sha3": "^0.9.3",
     "jszip": "^3.10.1",
     "lucide-react": "^0.462.0",
+    "mammoth": "^1.11.0",
     "next-themes": "^0.3.0",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
