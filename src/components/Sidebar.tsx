@@ -19,6 +19,7 @@ import {
   Shield,
   Scissors,
   Images,
+  Wand2,
   Search,
   ChevronDown,
   ChevronUp,
@@ -166,6 +167,13 @@ const toolCategories: ToolCategory[] = [
         icon: FileVideo,
         description: "Compare videos frame by frame",
         path: "/video-compare"
+      },
+      {
+        id: "video-transform",
+        name: "Video Transform",
+        icon: Wand2,
+        description: "Create technically different but visually similar videos",
+        path: "/video-transform"
       }
     ]
   },

@@ -20,6 +20,7 @@ import WordComparePage from "./pages/WordComparePage";
 import TextComparePage from "./pages/TextComparePage";
 import PhotoComparePage from "./pages/PhotoComparePage";
 import VideoComparePage from "./pages/VideoComparePage";
+import VideoTransformationPage from "./pages/VideoTransformationPage";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ const App = () => (
             <Route path="/text-compare" element={<TextComparePage />} />
             <Route path="/photo-compare" element={<PhotoComparePage />} />
             <Route path="/video-compare" element={<VideoComparePage />} />
+            <Route path="/video-transform" element={<VideoTransformationPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
