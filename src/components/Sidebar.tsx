@@ -159,6 +159,13 @@ const toolCategories: ToolCategory[] = [
         icon: Images,
         description: "Compare images and detect differences",
         path: "/photo-compare"
+      },
+      {
+        id: "video-compare",
+        name: "Video Compare",
+        icon: FileVideo,
+        description: "Compare videos frame by frame",
+        path: "/video-compare"
       }
     ]
   },
