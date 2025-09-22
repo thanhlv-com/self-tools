@@ -181,6 +181,13 @@ const toolCategories: ToolCategory[] = [
         icon: Shield,
         description: "Complete JWT debugging & creation 📄✨",
         path: "/jwt-tool"
+      },
+      {
+        id: "hash-data",
+        name: "Hash Data (SHA256)",
+        icon: Key,
+        description: "Generate SHA256 hashes from text or files",
+        path: "/hash-data"
       }
     ]
   }
