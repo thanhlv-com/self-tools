@@ -10,7 +10,6 @@ import JsonViewerPage from "./pages/JsonViewerPage";
 import JsonComparePage from "./pages/JsonComparePage"; 
 import Base64Page from "./pages/Base64Page";
 import UrlEncodePage from "./pages/UrlEncodePage";
-import HashPage from "./pages/HashPage";
 import TextCasePage from "./pages/TextCasePage";
 import VideoCompressorPage from "./pages/VideoCompressorPage";
 import ImageCompressorPage from "./pages/ImageCompressorPage";
@@ -42,7 +41,6 @@ const App = () => (
             <Route path="/json-compare" element={<JsonComparePage />} />
             <Route path="/base64" element={<Base64Page />} />
             <Route path="/url-encode" element={<UrlEncodePage />} />
-            <Route path="/hash" element={<HashPage />} />
             <Route path="/text-case" element={<TextCasePage />} />
             <Route path="/video-compressor" element={<VideoCompressorPage />} />
             <Route path="/image-compressor" element={<ImageCompressorPage />} />

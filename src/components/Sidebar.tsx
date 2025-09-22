@@ -6,7 +6,6 @@ import { Link, useLocation } from "react-router-dom";
 import { 
   Code2, 
   FileText, 
-  Hash, 
   Key, 
   Shuffle, 
   Type,
@@ -103,13 +102,6 @@ const toolCategories: ToolCategory[] = [
         icon: Type,
         description: "Convert text cases",
         path: "/text-case"
-      },
-      {
-        id: "hash",
-        name: "Hash Generator",
-        icon: Hash,
-        description: "Generate MD5, SHA-256 hashes",
-        path: "/hash"
       },
       {
         id: "word-compare",
