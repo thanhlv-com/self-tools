@@ -8,6 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Copy, Upload, Hash, FileText, Download } from "lucide-react";
 import { toast } from "sonner";
 import { PageLayout } from "@/components/PageLayout";
+import md2 from "js-md2";
+import md4 from "js-md4";
+import md5 from "md5";
+import * as hashjs from "hash.js";
 
 const HashDataPage = () => {
   const [textInput, setTextInput] = useState("");
@@ -16,10 +20,11 @@ const HashDataPage = () => {
   const [fileName, setFileName] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Hash functions using Web Crypto API and built-in implementations
+  // Hash functions using Web Crypto API and crypto libraries
   const generateHash = async (algorithm: string, data: string | ArrayBuffer): Promise<string> => {
     const encoder = new TextEncoder();
     const dataBuffer = typeof data === 'string' ? encoder.encode(data) : data;
+    const dataString = typeof data === 'string' ? data : new TextDecoder().decode(dataBuffer);
     
     // For algorithms supported by Web Crypto API
     if (['SHA-1', 'SHA-256', 'SHA-384', 'SHA-512'].includes(algorithm)) {
@@ -28,39 +33,33 @@ const HashDataPage = () => {
       return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
     
-    // For MD5 and SHA-224, we'll use a simple implementation
-    if (algorithm === 'MD5') {
-      return await generateMD5(dataBuffer);
+    // MD2 implementation
+    if (algorithm === 'MD2') {
+      return md2(dataString);
     }
     
+    // MD4 implementation
+    if (algorithm === 'MD4') {
+      return md4(dataString);
+    }
+    
+    // MD5 implementation
+    if (algorithm === 'MD5') {
+      return md5(dataString);
+    }
+    
+    // SHA-224 implementation using hash.js
     if (algorithm === 'SHA-224') {
-      return await generateSHA224(dataBuffer);
+      return hashjs.sha224().update(dataString).digest('hex');
     }
     
     throw new Error(`Unsupported algorithm: ${algorithm}`);
   };
 
-  // Simple MD5 implementation
-  const generateMD5 = async (data: ArrayBuffer): Promise<string> => {
-    // Note: This is a simplified implementation for demo purposes
-    // In production, you'd want to use a proper crypto library
-    const array = new Uint8Array(data);
-    let hash = 0;
-    for (let i = 0; i < array.length; i++) {
-      hash = ((hash << 5) - hash + array[i]) & 0xffffffff;
-    }
-    return Math.abs(hash).toString(16).padStart(32, '0');
-  };
-
-  // Simple SHA-224 implementation (truncated SHA-256)
-  const generateSHA224 = async (data: ArrayBuffer): Promise<string> => {
-    const sha256 = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(sha256));
-    const sha256Hex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    return sha256Hex.substring(0, 56); // SHA-224 is first 224 bits (28 bytes = 56 hex chars)
-  };
 
   const algorithms = [
+    { name: 'MD2', key: 'MD2', description: '128-bit hash function (deprecated for security)' },
+    { name: 'MD4', key: 'MD4', description: '128-bit hash function (deprecated for security)' },
     { name: 'MD5', key: 'MD5', description: '128-bit hash function (deprecated for security)' },
     { name: 'SHA-1', key: 'SHA-1', description: '160-bit hash function (deprecated for security)' },
     { name: 'SHA-224', key: 'SHA-224', description: '224-bit hash function' },
@@ -183,13 +182,13 @@ const HashDataPage = () => {
   return (
     <PageLayout
       title="Hash Data (Multiple Algorithms)"
-      description="Generate hashes using MD5, SHA-1, SHA-224, SHA-256, SHA-384, and SHA-512 algorithms"
+      description="Generate hashes using MD2, MD4, MD5, SHA-1, SHA-224, SHA-256, SHA-384, and SHA-512 algorithms"
       activeTool="hash-data"
     >
       <div className="space-y-6">
         <div>
           <h2 className="text-2xl font-bold text-foreground mb-2">Hash Data (Multiple Algorithms)</h2>
-          <p className="text-muted-foreground">Generate hashes using multiple algorithms including MD5, SHA-1, SHA-224, SHA-256, SHA-384, and SHA-512. Compare different hash outputs for the same input.</p>
+          <p className="text-muted-foreground">Generate hashes using multiple algorithms including MD2, MD4, MD5, SHA-1, SHA-224, SHA-256, SHA-384, and SHA-512. Compare different hash outputs for the same input.</p>
         </div>
 
           <Tabs defaultValue="text" className="w-full">
@@ -416,6 +415,8 @@ const HashDataPage = () => {
                     <div className="space-y-2">
                       <h4 className="font-medium">Legacy Algorithms (Not Recommended):</h4>
                       <div className="space-y-1">
+                        <p><strong>MD2:</strong> 128-bit, very slow and cryptographically broken</p>
+                        <p><strong>MD4:</strong> 128-bit, fast but cryptographically broken</p>
                         <p><strong>MD5:</strong> 128-bit, fast but cryptographically broken</p>
                         <p><strong>SHA-1:</strong> 160-bit, deprecated due to vulnerabilities</p>
                       </div>
