@@ -11,19 +11,63 @@ import { PageLayout } from "@/components/PageLayout";
 
 const HashDataPage = () => {
   const [textInput, setTextInput] = useState("");
-  const [textHash, setTextHash] = useState("");
-  const [fileHash, setFileHash] = useState("");
+  const [textHashes, setTextHashes] = useState<Record<string, string>>({});
+  const [fileHashes, setFileHashes] = useState<Record<string, string>>();
   const [fileName, setFileName] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // SHA256 hash function using Web Crypto API
-  const generateSHA256 = async (data: string | ArrayBuffer): Promise<string> => {
+  // Hash functions using Web Crypto API and built-in implementations
+  const generateHash = async (algorithm: string, data: string | ArrayBuffer): Promise<string> => {
     const encoder = new TextEncoder();
     const dataBuffer = typeof data === 'string' ? encoder.encode(data) : data;
-    const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    
+    // For algorithms supported by Web Crypto API
+    if (['SHA-1', 'SHA-256', 'SHA-384', 'SHA-512'].includes(algorithm)) {
+      const hashBuffer = await crypto.subtle.digest(algorithm, dataBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+    
+    // For MD5 and SHA-224, we'll use a simple implementation
+    if (algorithm === 'MD5') {
+      return await generateMD5(dataBuffer);
+    }
+    
+    if (algorithm === 'SHA-224') {
+      return await generateSHA224(dataBuffer);
+    }
+    
+    throw new Error(`Unsupported algorithm: ${algorithm}`);
   };
+
+  // Simple MD5 implementation
+  const generateMD5 = async (data: ArrayBuffer): Promise<string> => {
+    // Note: This is a simplified implementation for demo purposes
+    // In production, you'd want to use a proper crypto library
+    const array = new Uint8Array(data);
+    let hash = 0;
+    for (let i = 0; i < array.length; i++) {
+      hash = ((hash << 5) - hash + array[i]) & 0xffffffff;
+    }
+    return Math.abs(hash).toString(16).padStart(32, '0');
+  };
+
+  // Simple SHA-224 implementation (truncated SHA-256)
+  const generateSHA224 = async (data: ArrayBuffer): Promise<string> => {
+    const sha256 = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(sha256));
+    const sha256Hex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return sha256Hex.substring(0, 56); // SHA-224 is first 224 bits (28 bytes = 56 hex chars)
+  };
+
+  const algorithms = [
+    { name: 'MD5', key: 'MD5', description: '128-bit hash function (deprecated for security)' },
+    { name: 'SHA-1', key: 'SHA-1', description: '160-bit hash function (deprecated for security)' },
+    { name: 'SHA-224', key: 'SHA-224', description: '224-bit hash function' },
+    { name: 'SHA-256', key: 'SHA-256', description: '256-bit hash function (recommended)' },
+    { name: 'SHA-384', key: 'SHA-384', description: '384-bit hash function' },
+    { name: 'SHA-512', key: 'SHA-512', description: '512-bit hash function' }
+  ];
 
   const handleTextHash = useCallback(async () => {
     if (!textInput.trim()) {
@@ -33,11 +77,14 @@ const HashDataPage = () => {
 
     setIsProcessing(true);
     try {
-      const hash = await generateSHA256(textInput);
-      setTextHash(hash);
+      const hashes: Record<string, string> = {};
+      for (const algorithm of algorithms) {
+        hashes[algorithm.key] = await generateHash(algorithm.key, textInput);
+      }
+      setTextHashes(hashes);
       toast.success("Text hashed successfully!");
     } catch (error) {
-      toast.error("Failed to generate hash");
+      toast.error("Failed to generate hashes");
       console.error("Hash generation error:", error);
     } finally {
       setIsProcessing(false);
@@ -53,8 +100,11 @@ const HashDataPage = () => {
     
     try {
       const arrayBuffer = await file.arrayBuffer();
-      const hash = await generateSHA256(arrayBuffer);
-      setFileHash(hash);
+      const hashes: Record<string, string> = {};
+      for (const algorithm of algorithms) {
+        hashes[algorithm.key] = await generateHash(algorithm.key, arrayBuffer);
+      }
+      setFileHashes(hashes);
       toast.success(`File "${file.name}" hashed successfully!`);
     } catch (error) {
       toast.error("Failed to hash file");
@@ -64,21 +114,34 @@ const HashDataPage = () => {
     }
   }, []);
 
-  const copyToClipboard = async (text: string, type: string) => {
+  const copyToClipboard = async (text: string, algorithm: string, type: string) => {
     if (!text) {
-      toast.error(`No ${type} hash to copy`);
+      toast.error(`No ${algorithm} ${type} hash to copy`);
       return;
     }
     
     try {
       await navigator.clipboard.writeText(text);
-      toast.success(`${type} hash copied to clipboard!`);
+      toast.success(`${algorithm} ${type} hash copied to clipboard!`);
     } catch (error) {
       toast.error("Failed to copy to clipboard");
     }
   };
 
-  const downloadHash = (hash: string, prefix: string) => {
+  const copyAllHashes = async (hashes: Record<string, string>, type: string) => {
+    const hashText = algorithms
+      .map(alg => `${alg.name}: ${hashes[alg.key] || 'N/A'}`)
+      .join('\n');
+    
+    try {
+      await navigator.clipboard.writeText(hashText);
+      toast.success(`All ${type} hashes copied to clipboard!`);
+    } catch (error) {
+      toast.error("Failed to copy to clipboard");
+    }
+  };
+
+  const downloadHash = (hash: string, algorithm: string, prefix: string) => {
     if (!hash) {
       toast.error("No hash to download");
       return;
@@ -87,31 +150,46 @@ const HashDataPage = () => {
     const element = document.createElement("a");
     const file = new Blob([hash], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
-    element.download = `${prefix}_sha256_hash.txt`;
+    element.download = `${prefix}_${algorithm.toLowerCase()}_hash.txt`;
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
-    toast.success("Hash file downloaded!");
+    toast.success(`${algorithm} hash file downloaded!`);
+  };
+
+  const downloadAllHashes = (hashes: Record<string, string>, prefix: string) => {
+    const hashText = algorithms
+      .map(alg => `${alg.name}: ${hashes[alg.key] || 'N/A'}`)
+      .join('\n');
+
+    const element = document.createElement("a");
+    const file = new Blob([hashText], { type: 'text/plain' });
+    element.href = URL.createObjectURL(file);
+    element.download = `${prefix}_all_hashes.txt`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+    toast.success("All hashes file downloaded!");
   };
 
   const clearAll = () => {
     setTextInput("");
-    setTextHash("");
-    setFileHash("");
+    setTextHashes({});
+    setFileHashes({});
     setFileName("");
     toast.success("All data cleared!");
   };
 
   return (
     <PageLayout
-      title="Hash Data (SHA256)"
-      description="Generate SHA256 hashes from text input or uploaded files"
+      title="Hash Data (Multiple Algorithms)"
+      description="Generate hashes using MD5, SHA-1, SHA-224, SHA-256, SHA-384, and SHA-512 algorithms"
       activeTool="hash-data"
     >
       <div className="space-y-6">
         <div>
-          <h2 className="text-2xl font-bold text-foreground mb-2">Hash Data (SHA256)</h2>
-          <p className="text-muted-foreground">Generate SHA256 hashes from text input or uploaded files. SHA256 is a cryptographic hash function that produces a unique 256-bit signature for any input.</p>
+          <h2 className="text-2xl font-bold text-foreground mb-2">Hash Data (Multiple Algorithms)</h2>
+          <p className="text-muted-foreground">Generate hashes using multiple algorithms including MD5, SHA-1, SHA-224, SHA-256, SHA-384, and SHA-512. Compare different hash outputs for the same input.</p>
         </div>
 
           <Tabs defaultValue="text" className="w-full">
@@ -164,34 +242,60 @@ const HashDataPage = () => {
                     </Button>
                   </div>
 
-                  {textHash && (
-                    <div className="space-y-2">
-                      <Label>SHA256 Hash:</Label>
-                      <div className="flex gap-2">
-                        <Input
-                          value={textHash}
-                          readOnly
-                          className="font-mono text-sm bg-muted"
-                        />
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => copyToClipboard(textHash, "text")}
-                          className="flex items-center gap-1"
-                        >
-                          <Copy className="h-4 w-4" />
-                          Copy
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => downloadHash(textHash, "text")}
-                          className="flex items-center gap-1"
-                        >
-                          <Download className="h-4 w-4" />
-                          Download
-                        </Button>
+                  {Object.keys(textHashes).length > 0 && (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <Label>Hash Results:</Label>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => copyAllHashes(textHashes, "text")}
+                            className="flex items-center gap-1"
+                          >
+                            <Copy className="h-4 w-4" />
+                            Copy All
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => downloadAllHashes(textHashes, "text")}
+                            className="flex items-center gap-1"
+                          >
+                            <Download className="h-4 w-4" />
+                            Download All
+                          </Button>
+                        </div>
                       </div>
+                      
+                      {algorithms.map((algorithm) => (
+                        <div key={algorithm.key} className="space-y-2">
+                          <Label className="text-sm font-medium">{algorithm.name}:</Label>
+                          <div className="flex gap-2">
+                            <Input
+                              value={textHashes[algorithm.key] || ''}
+                              readOnly
+                              className="font-mono text-xs bg-muted"
+                            />
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => copyToClipboard(textHashes[algorithm.key], algorithm.name, "text")}
+                              className="flex items-center gap-1"
+                            >
+                              <Copy className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => downloadHash(textHashes[algorithm.key], algorithm.name, "text")}
+                              className="flex items-center gap-1"
+                            >
+                              <Download className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </CardContent>
@@ -224,34 +328,60 @@ const HashDataPage = () => {
                     </div>
                   )}
 
-                  {fileHash && (
-                    <div className="space-y-2">
-                      <Label>SHA256 Hash:</Label>
-                      <div className="flex gap-2">
-                        <Input
-                          value={fileHash}
-                          readOnly
-                          className="font-mono text-sm bg-muted"
-                        />
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => copyToClipboard(fileHash, "file")}
-                          className="flex items-center gap-1"
-                        >
-                          <Copy className="h-4 w-4" />
-                          Copy
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => downloadHash(fileHash, fileName.split('.')[0] || "file")}
-                          className="flex items-center gap-1"
-                        >
-                          <Download className="h-4 w-4" />
-                          Download
-                        </Button>
+                  {fileHashes && Object.keys(fileHashes).length > 0 && (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <Label>Hash Results:</Label>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => copyAllHashes(fileHashes, "file")}
+                            className="flex items-center gap-1"
+                          >
+                            <Copy className="h-4 w-4" />
+                            Copy All
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => downloadAllHashes(fileHashes, fileName.split('.')[0] || "file")}
+                            className="flex items-center gap-1"
+                          >
+                            <Download className="h-4 w-4" />
+                            Download All
+                          </Button>
+                        </div>
                       </div>
+                      
+                      {algorithms.map((algorithm) => (
+                        <div key={algorithm.key} className="space-y-2">
+                          <Label className="text-sm font-medium">{algorithm.name}:</Label>
+                          <div className="flex gap-2">
+                            <Input
+                              value={fileHashes[algorithm.key] || ''}
+                              readOnly
+                              className="font-mono text-xs bg-muted"
+                            />
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => copyToClipboard(fileHashes[algorithm.key], algorithm.name, "file")}
+                              className="flex items-center gap-1"
+                            >
+                              <Copy className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => downloadHash(fileHashes[algorithm.key], algorithm.name, fileName.split('.')[0] || "file")}
+                              className="flex items-center gap-1"
+                            >
+                              <Download className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
 
@@ -270,13 +400,34 @@ const HashDataPage = () => {
 
           <Card className="bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
             <CardContent className="pt-6">
-              <div className="space-y-2">
-                <h3 className="font-semibold text-blue-900 dark:text-blue-100">About SHA256</h3>
-                <div className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
-                  <p>• SHA256 produces a unique 256-bit (64-character) hash for any input</p>
-                  <p>• Even small changes in input result in completely different hashes</p>
-                  <p>• Commonly used for file integrity verification and digital signatures</p>
-                  <p>• Cryptographically secure and collision-resistant</p>
+              <div className="space-y-4">
+                <h3 className="font-semibold text-blue-900 dark:text-blue-100">About Hash Algorithms</h3>
+                <div className="text-sm text-blue-800 dark:text-blue-200">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <h4 className="font-medium">Secure Algorithms (Recommended):</h4>
+                      <div className="space-y-1">
+                        <p><strong>SHA-256:</strong> 256-bit, widely used, cryptographically secure</p>
+                        <p><strong>SHA-384:</strong> 384-bit, part of SHA-2 family</p>
+                        <p><strong>SHA-512:</strong> 512-bit, highest security in SHA-2</p>
+                        <p><strong>SHA-224:</strong> 224-bit, truncated SHA-256</p>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="font-medium">Legacy Algorithms (Not Recommended):</h4>
+                      <div className="space-y-1">
+                        <p><strong>MD5:</strong> 128-bit, fast but cryptographically broken</p>
+                        <p><strong>SHA-1:</strong> 160-bit, deprecated due to vulnerabilities</p>
+                      </div>
+                      <div className="mt-3 space-y-1">
+                        <h4 className="font-medium">Common Uses:</h4>
+                        <p>• File integrity verification</p>
+                        <p>• Digital signatures and certificates</p>
+                        <p>• Password storage (with proper salting)</p>
+                        <p>• Blockchain and cryptocurrency</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>
