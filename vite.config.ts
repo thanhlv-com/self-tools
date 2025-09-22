@@ -17,9 +17,25 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      crypto: 'crypto-browserify',
+      buffer: 'buffer',
+    },
+  },
+  define: {
+    global: 'globalThis',
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-toast'],
+        },
+      },
     },
   },
   optimizeDeps: {
     exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util'],
+    include: ['buffer', 'crypto-browserify'],
   },
 }));
